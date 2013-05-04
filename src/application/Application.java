@@ -1,8 +1,6 @@
 package application;
 
-import java.awt.Frame;
-import java.awt.GraphicsConfiguration;
-import java.awt.Toolkit;
+import java.awt.*;
 
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
@@ -115,13 +113,16 @@ public class Application {
 		// Swing-related code
 		JFrame appFrame = new JFrame("Physics Engine - Project 2");
 		appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        canvas.setPreferredSize(new Dimension(800,600));
 		appFrame.add(canvas);
 		appFrame.pack();
-		if (Toolkit.getDefaultToolkit().isFrameStateSupported(
-				Frame.MAXIMIZED_BOTH)) {
-			appFrame.setExtendedState(appFrame.getExtendedState()
-					| Frame.MAXIMIZED_BOTH);
-		}
+        appFrame.setLocationRelativeTo(null); //center the window
+        //disabled because it's super annoying for testing --david
+//		if (Toolkit.getDefaultToolkit().isFrameStateSupported(
+//				Frame.MAXIMIZED_BOTH)) {
+//			appFrame.setExtendedState(appFrame.getExtendedState()
+//					| Frame.MAXIMIZED_BOTH);
+//		}
 
 		appFrame.setVisible(true);
 	}
