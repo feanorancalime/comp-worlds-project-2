@@ -7,3 +7,7 @@
 
 .project
 .classpath
+
+# IntelliJ Project Files #
+.idea
+*.iml
