@@ -1,10 +1,10 @@
 package application;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
 
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
-import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingBox;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
@@ -12,7 +12,6 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.DirectionalLight;
 import javax.media.j3d.Light;
-import javax.media.j3d.PickInfo;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
@@ -24,17 +23,18 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
-import com.sun.j3d.utils.behaviors.mouse.MouseWheelZoom;
 import com.sun.j3d.utils.geometry.Box;
-import com.sun.j3d.utils.pickfast.behaviors.PickRotateBehavior;
-import com.sun.j3d.utils.pickfast.behaviors.PickTranslateBehavior;
-import com.sun.j3d.utils.pickfast.behaviors.PickZoomBehavior;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public class Application {
 
+	// Physics updates per second (approximate).
+	private static final int UPDATE_RATE = 30;
+	// Width of the extent in meters.
+	private static final float EXTENT_WIDTH = 20;
+	private static final float COEFFICIENT_OF_RESTITUTION = .95f;
+	
 	private SimpleUniverse simpleU;
-	private BranchGroup scene;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -62,10 +62,18 @@ public class Application {
 		simpleU.getViewer().getView().setSceneAntialiasingEnable(true);
 
 		// Scene graph
-		scene = new BranchGroup();
-		scene.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
-		scene.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
-		scene.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+		
+		
+		// Add a scaling transform that resizes the virtual world to fit
+		// within the standard view frustum.
+		BranchGroup trueScene = new BranchGroup();
+		TransformGroup worldScaleTG = new TransformGroup();
+		Transform3D t3D = new Transform3D();
+		t3D.setScale( 6 / EXTENT_WIDTH);
+		worldScaleTG.setTransform(t3D);
+		trueScene.addChild(worldScaleTG);
+		BranchGroup scene = new BranchGroup();
+		worldScaleTG.addChild(scene);
 
 		Light light = new AmbientLight(new Color3f(1f, 1f, 1f));
 		scene.addChild(light);
@@ -82,33 +90,17 @@ public class Application {
 		new Point3d(),1000.0));
 		scene.addChild(keyNavBeh);
 		
-		// Picking
-		Behavior b = new PickRotateBehavior(scene, canvas,
-				new BoundingSphere(), PickInfo.PICK_BOUNDS);
-		b.setSchedulingBounds(new BoundingSphere());
-		scene.addChild(b);
-		b = new PickTranslateBehavior(scene, canvas, new BoundingSphere(),
-				PickInfo.PICK_BOUNDS);
-		b.setSchedulingBounds(new BoundingSphere());
-		scene.addChild(b);
-		b = new PickZoomBehavior(scene, canvas, new BoundingSphere(),
-				PickInfo.PICK_BOUNDS);
-		b.setSchedulingBounds(new BoundingSphere());
-		b = new MouseWheelZoom(simpleU.getViewingPlatform().getViewPlatformTransform());
-		b.setSchedulingBounds(new BoundingSphere());
-		scene.addChild(b);
-		
 		// Extent
 		Appearance app = new Appearance();
 		PolygonAttributes polyAttribs = new PolygonAttributes(PolygonAttributes.POLYGON_LINE, PolygonAttributes.CULL_NONE, 0);
 		app.setPolygonAttributes(polyAttribs);
 		
 		app.setColoringAttributes(new ColoringAttributes(new Color3f(1.0f, 1.0f, 1.0f), ColoringAttributes.FASTEST));
-		Box box = new Box(5f, 5f, 5f, app);
-		box.setPickable(false);
-		scene.addChild(box);
+		Box extent = new Box(EXTENT_WIDTH / 2, EXTENT_WIDTH / 2, EXTENT_WIDTH / 2, app);
+		extent.setPickable(false);
+		scene.addChild(extent);
 		
-		simpleU.addBranchGraph(scene);
+		simpleU.addBranchGraph(trueScene);
 
 		// Swing-related code
 		JFrame appFrame = new JFrame("Physics Engine - Project 2");
@@ -126,6 +118,4 @@ public class Application {
 
 		appFrame.setVisible(true);
 	}
-
-
 }
