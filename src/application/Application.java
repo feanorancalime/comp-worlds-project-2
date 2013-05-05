@@ -99,6 +99,8 @@ public class Application {
 		Box extent = new Box(EXTENT_WIDTH / 2, EXTENT_WIDTH / 2, EXTENT_WIDTH / 2, app);
 		extent.setPickable(false);
 		scene.addChild(extent);
+
+        scene.addChild(new ParticleSystem(10));
 		
 		simpleU.addBranchGraph(trueScene);
 
