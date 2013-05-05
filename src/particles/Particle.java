@@ -1,10 +1,10 @@
-package application;
+package particles;
 
 import javax.vecmath.Color4f;
 import javax.vecmath.Point3f;
 
 /**
- *
+ * A particle. Meant to live within the ParticleSystem class.
  */
 public class Particle {
     private final int index;
@@ -20,10 +20,16 @@ public class Particle {
         this.color = color;
     }
 
-    public Point3f getPoint() {
+    /**
+     * @return the particle's current position
+     */
+    public Point3f getPosition() {
         return point;
     }
 
+    /**
+     * @return the particle's current color
+     */
     public Color4f getColor() {
         return color;
     }

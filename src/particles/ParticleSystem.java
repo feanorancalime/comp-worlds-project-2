@@ -1,4 +1,6 @@
-package application;
+package particles;
+
+import particles.behaviors.ParticleBehavior;
 
 import javax.media.j3d.*;
 import javax.vecmath.Color4f;
@@ -103,7 +105,7 @@ public class ParticleSystem extends Shape3D {
      */
     private final void updateParticle(int index) {
         Color4f color = particles[index].getColor();
-        Point3f point = particles[index].getPoint();
+        Point3f point = particles[index].getPosition();
         setColor(index,color);
         setPosition(index,point);
     }

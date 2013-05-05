@@ -25,6 +25,7 @@ import javax.vecmath.Vector3f;
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.universe.SimpleUniverse;
+import particles.ParticleSystem;
 
 public class Application {
 
