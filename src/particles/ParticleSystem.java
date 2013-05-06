@@ -74,6 +74,10 @@ public class ParticleSystem extends BranchGroup {
             for(int j = 0; j < collisions.length; j++) {
                 collisions[j].behave(this, particles[i]);
             }
+
+            //reset particle forces
+            particles[i].forceAccumulator.scale(0);
+
             //update display position
             particles[i].updateTransformGroup();
         }

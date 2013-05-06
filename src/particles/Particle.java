@@ -91,7 +91,6 @@ public class Particle extends BranchGroup {
         position.scaleAdd(dt, velocity, position);
         position.scaleAdd(dt*dt / 2, forceAccumulator, position);
         velocity.scaleAdd(dt, forceAccumulator, velocity);
-        forceAccumulator.scale(0); //reset
     }
 
     private Node createShape(float radius, Color4f color) {

@@ -162,6 +162,7 @@ public class Application {
 
     private void addBehaviors(ParticleSystem particleSystem) {
         particleSystem.addParticleForceBehavior(new GravityBehavior(0.00001));
+        particleSystem.addParticleCollisionBehavior(new BoundingBehavior(EXTENT_WIDTH/2,COEFFICIENT_OF_RESTITUTION));
     }
 
     private void tick() {
