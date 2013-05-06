@@ -2,6 +2,8 @@ package application;
 
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
@@ -15,9 +17,7 @@ import javax.media.j3d.Light;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
@@ -27,6 +27,7 @@ import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import particles.ParticleSystem;
+import particles.behaviors.GravityBehavior;
 
 public class Application {
 
@@ -37,8 +38,9 @@ public class Application {
 	private static final float COEFFICIENT_OF_RESTITUTION = .95f;
 	
 	private SimpleUniverse simpleU;
+    private ParticleSystem particleSystem;
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -57,7 +59,7 @@ public class Application {
 		// Build the universe
 		GraphicsConfiguration config = SimpleUniverse
 				.getPreferredConfiguration();
-		Canvas3D canvas = new Canvas3D(config);
+		final Canvas3D canvas = new Canvas3D(config);
 
 		simpleU = new SimpleUniverse(canvas);
 		simpleU.getViewingPlatform().setNominalViewingTransform();
@@ -96,7 +98,7 @@ public class Application {
         Point3d focus = new Point3d();
         Point3d camera = new Point3d(0,0,1);
         Vector3d up = new Vector3d(0,1,0);
-        double DISTANCE = 1d;
+        double DISTANCE = 10d;
         TransformGroup lightTransform = new TransformGroup();
         TransformGroup curTransform = new TransformGroup();
         FlyCam fc = new FlyCam(simpleU.getViewingPlatform().getViewPlatformTransform(),focus,camera,up,DISTANCE, lightTransform, curTransform);
@@ -123,8 +125,8 @@ public class Application {
         extent = new Box(dim, dim, dim, app);
 		extent.setPickable(false);
 		scene.addChild(extent);
-
-        scene.addChild(new ParticleSystem(10));
+        particleSystem = new ParticleSystem(10,EXTENT_WIDTH/2);
+        scene.addChild(particleSystem);
 		
 		simpleU.addBranchGraph(trueScene);
 
@@ -142,6 +144,27 @@ public class Application {
 //					| Frame.MAXIMIZED_BOTH);
 //		}
 
+
+        //simulation start
+        addBehaviors(particleSystem);
+        new Timer(1000 / UPDATE_RATE, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                canvas.stopRenderer();
+                tick();
+                canvas.startRenderer();
+            }
+        }).start();
+
+
+
 		appFrame.setVisible(true);
 	}
+
+    private void addBehaviors(ParticleSystem particleSystem) {
+        particleSystem.addParticleForceBehavior(new GravityBehavior(0.00001));
+    }
+
+    private void tick() {
+        particleSystem.update(1000 / UPDATE_RATE);
+    }
 }
