@@ -18,4 +18,6 @@ public class HalfSpace {
 	public HalfSpace(Tuple3f position, Tuple3f normal) {
 		this(position.x, position.y, position.z, normal.x, normal.y, normal.z);
 	}
+
+
 }

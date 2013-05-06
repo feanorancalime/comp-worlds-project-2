@@ -92,12 +92,22 @@ public class Application {
 		scene.addChild(keyNavBeh);
 		
 		// Extent
-		Appearance app = new Appearance();
-		PolygonAttributes polyAttribs = new PolygonAttributes(PolygonAttributes.POLYGON_LINE, PolygonAttributes.CULL_NONE, 0);
-		app.setPolygonAttributes(polyAttribs);
-		
-		app.setColoringAttributes(new ColoringAttributes(new Color3f(1.0f, 1.0f, 1.0f), ColoringAttributes.FASTEST));
-		Box extent = new Box(EXTENT_WIDTH / 2, EXTENT_WIDTH / 2, EXTENT_WIDTH / 2, app);
+        Appearance app = new Appearance();
+        PolygonAttributes polyAttribs = new PolygonAttributes(PolygonAttributes.POLYGON_LINE, PolygonAttributes.CULL_NONE, 0);
+        app.setPolygonAttributes(polyAttribs);
+        app.setColoringAttributes(new ColoringAttributes(new Color3f(1.0f, 1.0f, 1.0f), ColoringAttributes.FASTEST));
+        float dim = EXTENT_WIDTH / 2  - 0.02f;
+		Box extent = new Box(dim, dim, dim, app);
+        extent.setPickable(false);
+        scene.addChild(extent);
+
+        //extent solid back
+        app = new Appearance();
+        polyAttribs = new PolygonAttributes(PolygonAttributes.POLYGON_FILL, PolygonAttributes.CULL_FRONT, 0);
+        app.setPolygonAttributes(polyAttribs);
+        app.setColoringAttributes(new ColoringAttributes(new Color3f(0.5f, 0.5f, 0.5f), ColoringAttributes.FASTEST));
+        dim = EXTENT_WIDTH / 2;
+        extent = new Box(dim, dim, dim, app);
 		extent.setPickable(false);
 		scene.addChild(extent);
 
