@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
+import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
@@ -86,10 +87,22 @@ public class Application {
 		Transform3D translate = new Transform3D();
 		translate.setTranslation(new Vector3f(0f, 0f, 20f)); // set as translation
 		cameraTransform.setTransform(translate); // used for initial position
-		KeyNavigatorBehavior keyNavBeh = new KeyNavigatorBehavior(cameraTransform);
-		keyNavBeh.setSchedulingBounds(new BoundingSphere(
-		new Point3d(),1000.0));
-		scene.addChild(keyNavBeh);
+//		KeyNavigatorBehavior keyNavBeh = new KeyNavigatorBehavior(cameraTransform);
+//		keyNavBeh.setSchedulingBounds(new BoundingSphere(
+//		new Point3d(),1000.0));
+//		scene.addChild(keyNavBeh);
+
+
+        Point3d focus = new Point3d();
+        Point3d camera = new Point3d(0,0,1);
+        Vector3d up = new Vector3d(0,1,0);
+        double DISTANCE = 1d;
+        TransformGroup lightTransform = new TransformGroup();
+        TransformGroup curTransform = new TransformGroup();
+        FlyCam fc = new FlyCam(simpleU.getViewingPlatform().getViewPlatformTransform(),focus,camera,up,DISTANCE, lightTransform, curTransform);
+        fc.setSchedulingBounds(new BoundingSphere(new Point3d(),1000.0));
+        scene.addChild(fc);
+
 		
 		// Extent
         Appearance app = new Appearance();
