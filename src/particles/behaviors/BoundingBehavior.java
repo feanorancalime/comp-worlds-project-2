@@ -36,7 +36,8 @@ public class BoundingBehavior implements ParticleBehavior {
     @Override
     public void behave(ParticleSystemInterface particleSystem, ParticleInterface particle) {
         for(int i = 0; i < boundaries.length; i++) {
-            boundaries[i].checkAndResolveCollision(particle, coefficientOfRestitution);
+            if(particle instanceof Particle)
+                boundaries[i].checkAndResolveCollision((Particle)particle, coefficientOfRestitution);
         }
     }
 

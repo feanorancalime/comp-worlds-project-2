@@ -118,7 +118,7 @@ public class Particle extends BranchGroup implements ParticleInterface {
 //        TransparencyAttributes transparencyAttributes = new TransparencyAttributes();
 //        transparencyAttributes.setTransparency(color.getW());
 
-        appearance.setColoringAttributes(new ColoringAttributes(color.getX(),color.getY(),color.getZ(),ColoringAttributes.FASTEST));
+        appearance.setColoringAttributes(new ColoringAttributes(color.getX(), color.getY(), color.getZ(), ColoringAttributes.FASTEST));
         return new Sphere(radius,0,3,appearance);
     }
 

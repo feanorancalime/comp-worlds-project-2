@@ -76,7 +76,7 @@ public class ParticleSystem extends BranchGroup implements ParticleSystemInterfa
             }
 
             //reset particle forces
-            particles[i].forceAccumulator.scale(0);
+            particles[i].getForceAccumulator().scale(0);
 
             //update display position
             particles[i].updateTransformGroup();

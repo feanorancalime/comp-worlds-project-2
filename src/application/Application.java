@@ -53,7 +53,7 @@ public class Application {
 	private int forceMagnitude;
 	
 	// Coefficient of restitution.
-	private float coefficientOfRestitution = 0.99f;
+	private float coefficientOfRestitution = 1f;
 	
 	// Simple universe reference.
 	private SimpleUniverse simpleU;
@@ -148,9 +148,9 @@ public class Application {
 		// Swing-related code
 		JFrame appFrame = new JFrame("Physics Engine - Project 2");
 		appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        canvas.setPreferredSize(new Dimension(400,300));
+        canvas.setPreferredSize(new Dimension(800,600));
 		appFrame.add(canvas, BorderLayout.CENTER);
-		//appFrame.add(buildControlPanel(), BorderLayout.SOUTH);
+		appFrame.add(buildControlPanel(), BorderLayout.SOUTH);
 		appFrame.pack();
         appFrame.setLocationRelativeTo(null); //center the window
         //disabled because it's super annoying for testing --david
@@ -173,12 +173,17 @@ public class Application {
 	}
 
     private void addBehaviors(ParticleSystem particleSystem) {
-        particleSystem.addParticleForceBehavior(new GravityBehavior(.000001));
+        particleSystem.addParticleForceBehavior(new GravityBehavior(10));
         particleSystem.addParticleCollisionBehavior(new BoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
     }
 
+
+    long old_time = System.currentTimeMillis();
+    long new_time;
     private void tick() {
-        particleSystem.update(1000 / UPDATE_RATE);
+        new_time = System.currentTimeMillis();
+        particleSystem.update((new_time - old_time) / 1000f);
+        old_time = new_time;
     }
 	
 	private final JPanel buildControlPanel() {
@@ -197,7 +202,7 @@ public class Application {
 
 		// Add controls for forces
 		JSlider forceMagnitudeSlider = buildSlider(0, 100, 100);
-		JSlider coefficientOfRestitutionSlider = buildSlider(0, 100, 100);
+		JSlider coefficientOfRestitutionSlider = buildSlider(0, 100, (int)(coefficientOfRestitution*100));
 		
 		// TODO Use the buildRadioButton() method to create these
 		JRadioButton enableFirstForce = new JRadioButton();
@@ -242,8 +247,8 @@ public class Application {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider) e.getSource();
-				coefficientOfRestitution = source.getValue();
-				coefficientLabel.setText("" + coefficientOfRestitution);
+				coefficientOfRestitution = source.getValue()/100f;
+				coefficientLabel.setText("" + source.getValue() + "%");
 			}
 		};
 		coefficientOfRestitutionSlider.addChangeListener(coefficientListener);
