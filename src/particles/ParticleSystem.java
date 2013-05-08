@@ -39,9 +39,15 @@ public class ParticleSystem extends BranchGroup implements ParticleSystemInterfa
         particleCollisions = new HashSet<ParticleBehavior>();
         particleSet = new HashSet<Particle>(numPoints);
         for(int i = 0; i < numPoints; i++ ){
+            double  r = rand.nextFloat(),
+                    g = rand.nextFloat(),
+                    b = rand.nextFloat();
+            double max = Math.max(Math.max(r,g),b);
+            r /= max; g /= max; b /= max; //normalize colors for MAXIMUM POWER
+
             Particle p = new Particle(this,
                     new Point3f(rand.nextFloat()*range*2-range,rand.nextFloat()*range*2-range,rand.nextFloat()*range*2-range),
-                    new Color4f(rand.nextFloat(),rand.nextFloat(),rand.nextFloat(),1f),radius);
+                    new Color4f((float)r,(float)g,(float)b,1f),radius);
             particleSet.add(p);
             this.addChild(p);
         }

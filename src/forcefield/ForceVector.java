@@ -44,7 +44,8 @@ public class ForceVector extends BranchGroup implements ParticleInterface {
 
     @Override
     public void updateTransformGroup() {
-        position.get(v3f);
+        //position.get(v3f);
+        vectorField.setForce(index,forceAccumulator);
 //        t3d.setTranslation(v3f);
 //        tg.setTransform(t3d);
     }

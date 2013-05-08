@@ -12,4 +12,6 @@ public interface ParticleBehavior {
     void behave(ParticleSystemInterface particleSystem, ParticleInterface particle);
     
     void updateBehaviorValue(float percentage);
+
+    String getName();
 }

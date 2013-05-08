@@ -113,33 +113,49 @@ public class VectorField extends Shape3D implements ParticleSystemInterface {
         //    ...which presumes that behaviors aren't frequently added or removed realtime
         ParticleBehavior[] forces = particleForces.toArray(new ParticleBehavior[particleForces.size()]);
         ParticleBehavior[] collisions = particleCollisions.toArray(new ParticleBehavior[particleCollisions.size()]);
-        Particle[] particles = particleSet.toArray(new Particle[particleSet.size()]);
 
-        for(int i = 0; i < particles.length; i++) {
+
+
+        for(int i = 0; i < this.forces.length; i++) {
             //accumulate forces
             for(int j = 0; j < forces.length; j++) {
                 forces[j].behave(this, this.forces[i]);
             }
             //update position
-            particles[i].update((float)dt);
+            this.forces[i].update((float)dt);
             //resolve collisions
             for(int j = 0; j < collisions.length; j++) {
                 collisions[j].behave(this, this.forces[i]);
             }
 
-            //reset particle forces
-            particles[i].forceAccumulator.scale(0);
-
             //update display position
-            particles[i].updateTransformGroup();
+            this.forces[i].updateTransformGroup();
+
+            //reset particle forces
+            this.forces[i].forceAccumulator.scale(0);
         }
     }
 
+    Vector3f forceVectorWorkspace = new Vector3f();
+    double maxLength = 0;
+    double scale = 1;
+    double maxLengthSquared = 0;
+
     public void setForce(int index, Vector3f forceVector) {
 
+        double len2 = forceVector.lengthSquared();
+        if(len2 > maxLengthSquared) {
+            maxLengthSquared = len2;
+            maxLength = forceVector.length();
+            scale = 1 / maxLength;
+            System.out.println("Max Length: " + maxLength);
+        }
+        forceVectorWorkspace.scale((float)scale,forceVector);
+
+
         setPosition(index+1,
-                forceVector.x+getPosStartX(index),
-                forceVector.y+getPosStartY(index),
-                forceVector.z+getPosStartZ(index));
+                forceVectorWorkspace.x+getPosStartX(index),
+                forceVectorWorkspace.y+getPosStartY(index),
+                forceVectorWorkspace.z+getPosStartZ(index));
     }
 }

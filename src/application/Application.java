@@ -6,6 +6,8 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
@@ -34,9 +36,7 @@ import particles.ParticleSystem;
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-import particles.behaviors.BoundingBehavior;
-import particles.behaviors.GravityBehavior;
-import particles.behaviors.ParticleBehavior;
+import particles.behaviors.*;
 
 public class Application {
 
@@ -60,6 +60,12 @@ public class Application {
 	
 	// Particle system
     private ParticleSystem particleSystem;
+    private VectorField forceField;
+    private static final int PARTICLE_COUNT = 50;
+    double DISTANCE = 15d;
+
+    private Set<ForceBehavior> forceBehaviors = new HashSet<ForceBehavior>();
+    private Set<CollisionBehavior> collisionBehaviors = new HashSet<CollisionBehavior>();
 
     /**
      * Main method.
@@ -113,7 +119,6 @@ public class Application {
 		Point3d focus = new Point3d();
         Point3d camera = new Point3d(0,0,1);
         Vector3d up = new Vector3d(0,1,0);
-        double DISTANCE = 10d;
         TransformGroup lightTransform = new TransformGroup();
         TransformGroup curTransform = new TransformGroup();
         FlyCam fc = new FlyCam(simpleU.getViewingPlatform().getViewPlatformTransform(),focus,camera,up,DISTANCE, lightTransform, curTransform);
@@ -139,9 +144,10 @@ public class Application {
         extent = new Box(dim, dim, dim, app);
 		extent.setPickable(false);
 		scene.addChild(extent);
-        particleSystem = new ParticleSystem(10,EXTENT_WIDTH/2);
+        particleSystem = new ParticleSystem(PARTICLE_COUNT,EXTENT_WIDTH/2);
         scene.addChild(particleSystem);
-        scene.addChild(new VectorField(EXTENT_WIDTH/2f, 10));
+        forceField = new VectorField(EXTENT_WIDTH/2f, 10);
+        scene.addChild(forceField);
 		
 		simpleU.addBranchGraph(trueScene);
 
@@ -173,8 +179,19 @@ public class Application {
 	}
 
     private void addBehaviors(ParticleSystem particleSystem) {
-        particleSystem.addParticleForceBehavior(new GravityBehavior(10));
-        particleSystem.addParticleCollisionBehavior(new BoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
+        GravityBehavior gravityBehavior = new GravityBehavior(10);
+        BoundingBehavior boundingBehavior = new BoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution);
+        particleSystem.addParticleForceBehavior(gravityBehavior);
+        particleSystem.addParticleCollisionBehavior(boundingBehavior);
+
+        //forceField.addParticleCollisionBehavior(boundingBehavior);
+        forceField.addParticleForceBehavior(gravityBehavior);
+
+        forceBehaviors.add(gravityBehavior);
+
+        collisionBehaviors.add(boundingBehavior);
+
+
     }
 
 
@@ -182,7 +199,9 @@ public class Application {
     long new_time;
     private void tick() {
         new_time = System.currentTimeMillis();
-        particleSystem.update((new_time - old_time) / 1000f);
+        float difference = (new_time - old_time)/ 1000f;
+        particleSystem.update(difference);
+        forceField.update(difference);
         old_time = new_time;
     }
 	

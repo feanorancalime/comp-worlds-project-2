@@ -14,7 +14,7 @@ import particles.behaviors.ParticleBehavior;
  * Time: 12:33 PM
  * To change this template use File | Settings | File Templates.
  */
-public class BoundingBehavior implements ParticleBehavior {
+public class BoundingBehavior implements CollisionBehavior {
     private HalfSpace[] boundaries;
     private float coefficientOfRestitution;
 
@@ -45,4 +45,19 @@ public class BoundingBehavior implements ParticleBehavior {
 	public void updateBehaviorValue(float percentageChange) {
 		coefficientOfRestitution = coefficientOfRestitution * percentageChange;
 	}
+
+    @Override
+    public String getName() {
+        return "Bounding Box";
+    }
+
+    @Override
+    public void setCoefficientOfRestitution(float coefficientOfRestitution) {
+        this.coefficientOfRestitution = coefficientOfRestitution;
+    }
+
+    @Override
+    public float getCoefficientOfRestitution() {
+        return coefficientOfRestitution;
+    }
 }
