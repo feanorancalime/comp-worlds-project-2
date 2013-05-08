@@ -12,7 +12,7 @@ import java.util.Set;
 /**
  * Represents a system of particleSet with a universal size and set of behaviors.
  */
-public class ParticleSystem extends BranchGroup {
+public class ParticleSystem extends BranchGroup implements ParticleSystemInterface {
     private Set<Particle> particleSet;
     private Set<ParticleBehavior> particleForces;
     private Set<ParticleBehavior> particleCollisions;

@@ -12,7 +12,7 @@ import java.awt.*;
 /**
  * A particle. Meant to live within the ParticleSystem class.
  */
-public class ForceVector extends BranchGroup {
+public class ForceVector extends BranchGroup implements ParticleInterface {
     private static final float DEFAULT_MASS = 10;
 
     //these are all required for rendering
@@ -21,7 +21,7 @@ public class ForceVector extends BranchGroup {
 
     //these are for the simulation
     public Vector3f velocity;
-    public float mass;
+    public double mass;
 
     //workspace variables
     private Vector3f v3f;
@@ -42,6 +42,7 @@ public class ForceVector extends BranchGroup {
 
     }
 
+    @Override
     public void updateTransformGroup() {
         position.get(v3f);
 //        t3d.setTranslation(v3f);
@@ -51,6 +52,7 @@ public class ForceVector extends BranchGroup {
     /**
      * @return the particle's current position
      */
+    @Override
     public Point3f getPosition() {
         return position;
     }
@@ -59,10 +61,11 @@ public class ForceVector extends BranchGroup {
      * update the particle
      * @param dt The time difference
      */
+    @Override
     public void update(float dt) {
         // The force accumulator vector (net force) now becomes
         // the acceleration vector.
-        forceAccumulator.scale(1 / mass);
+        forceAccumulator.scale(1 / (float)mass);
         position.scaleAdd(dt, velocity, position);
         position.scaleAdd(dt*dt / 2, forceAccumulator, position);
         velocity.scaleAdd(dt, forceAccumulator, velocity);
@@ -70,7 +73,26 @@ public class ForceVector extends BranchGroup {
 
     private final float[] points = new float[2*3];
 
-    private void setForceVector(final Vector3f forceVector) {
+    public void setForceVector(final Vector3f forceVector) {
         vectorField.setForce(index,forceVector);
+    }
+
+    @Override
+    public Vector3f getVelocity() {
+        return velocity;
+    }
+
+    @Override
+    public Vector3f getForceAccumulator() {
+        return forceAccumulator;
+    }
+
+    @Override
+    public double getMass() {
+        return mass;
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
     }
 }

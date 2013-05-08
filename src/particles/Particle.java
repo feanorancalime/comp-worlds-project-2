@@ -2,6 +2,7 @@ package particles;
 
 import com.sun.j3d.utils.geometry.*;
 import com.sun.j3d.utils.geometry.Sphere;
+import forcefield.ParticleInterface;
 
 import javax.media.j3d.*;
 import javax.vecmath.Color4f;
@@ -13,7 +14,7 @@ import java.util.Random;
 /**
  * A particle. Meant to live within the ParticleSystem class.
  */
-public class Particle extends BranchGroup {
+public class Particle extends BranchGroup implements ParticleInterface {
     private static final float DEFAULT_MASS = 10;
 
     //these are all required for rendering
@@ -25,7 +26,7 @@ public class Particle extends BranchGroup {
 
     //these are for the simulation
     public Vector3f velocity;
-    public float mass;
+    public double mass;
     public TransformGroup tg;
     public Transform3D t3d;
 
@@ -87,10 +88,25 @@ public class Particle extends BranchGroup {
     public void update(float dt) {
         // The force accumulator vector (net force) now becomes
         // the acceleration vector.
-        forceAccumulator.scale(1 / mass);
+        forceAccumulator.scale(1 / (float)mass);
         position.scaleAdd(dt, velocity, position);
         position.scaleAdd(dt*dt / 2, forceAccumulator, position);
         velocity.scaleAdd(dt, forceAccumulator, velocity);
+    }
+
+    @Override
+    public Vector3f getVelocity() {
+        return velocity;
+    }
+
+    @Override
+    public Vector3f getForceAccumulator() {
+        return forceAccumulator;
+    }
+
+    @Override
+    public double getMass() {
+        return mass;
     }
 
     private Node createShape(float radius, Color4f color) {
@@ -103,6 +119,10 @@ public class Particle extends BranchGroup {
 //        transparencyAttributes.setTransparency(color.getW());
 
         appearance.setColoringAttributes(new ColoringAttributes(color.getX(),color.getY(),color.getZ(),ColoringAttributes.FASTEST));
-        return new Sphere(radius,0,8,appearance);
+        return new Sphere(radius,0,3,appearance);
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
     }
 }

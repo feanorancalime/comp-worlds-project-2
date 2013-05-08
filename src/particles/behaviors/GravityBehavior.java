@@ -1,7 +1,9 @@
 package particles.behaviors;
 
+import forcefield.ParticleInterface;
 import particles.Particle;
 import particles.ParticleSystem;
+import particles.ParticleSystemInterface;
 
 /**
  * Gravity behavior for a particle system.
@@ -15,11 +17,11 @@ public class GravityBehavior implements ParticleBehavior {
     }
 
     @Override
-    public void behave(ParticleSystem particleSystem, Particle particle) {
-        particle.forceAccumulator.setY((float)(-G * particle.mass));
+    public void behave(ParticleSystemInterface particleSystem, ParticleInterface particle) {
+        particle.getForceAccumulator().setY((float)(-G * particle.getMass()));
     }
 
-	@Override
+    @Override
 	public void updateBehaviorValue(float percentageChange) {
 		G = G * percentageChange;
 	}

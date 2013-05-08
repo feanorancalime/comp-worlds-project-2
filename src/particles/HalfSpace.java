@@ -1,5 +1,7 @@
 package particles;
 
+import forcefield.ParticleInterface;
+
 import javax.vecmath.*;
 
 public class HalfSpace {
@@ -22,8 +24,8 @@ public class HalfSpace {
 
     Vector3f v3f = new Vector3f();
 
-    public void checkAndResolveCollision(Particle p, float COEFFICIENT_OF_RESTITUTION) {
-        p.position.get(v3f);
+    public void checkAndResolveCollision(ParticleInterface p, float COEFFICIENT_OF_RESTITUTION) {
+        p.getPosition().get(v3f);
         float distance = this.normal.dot(v3f) - this.intercept;
         if (distance < 0) {
             // Use Torricelli's equation to approximate the particle's
@@ -31,10 +33,10 @@ public class HalfSpace {
             // v_f^2 = v_i^2 + 2 * acceleration * distance
 
             // Final velocity of the particle in the direction of the halfspace normal
-            float v_f = this.normal.dot(p.velocity);
+            float v_f = this.normal.dot(p.getVelocity());
             // Velocity of the particle in the direction of the halfspace normal at the
             // time of contact, squared
-            float v_i_squared = v_f * v_f - 2 * p.forceAccumulator.dot(this.normal) * distance;
+            float v_i_squared = v_f * v_f - 2 * p.getForceAccumulator().dot(this.normal) * distance;
             // If v_i_squared is less than zero, then the quantities involved are so small
             // that numerical inaccuracy has produced an impossible result.  The velocity
             // at the time of contact should therefore be zero.
@@ -42,12 +44,12 @@ public class HalfSpace {
                 v_i_squared = 0;
             // Remove the incorrect velocity acquired after the contact and add the flipped
             // correct velocity.
-            p.velocity.scaleAdd(-v_f + COEFFICIENT_OF_RESTITUTION * (float)Math.sqrt(v_i_squared), this.normal, p.velocity);
+            p.getVelocity().scaleAdd(-v_f + COEFFICIENT_OF_RESTITUTION * (float)Math.sqrt(v_i_squared), this.normal, p.getVelocity());
 
             // Old code for adjusting the velocity.
             // p.velocity.scaleAdd(-(1 + COEFFICIENT_OF_RESTITUTION) * hs.normal.dot(p.velocity), hs.normal, p.velocity);
 
-            p.position.scaleAdd(-distance, this.normal, p.position);
+            p.getVelocity().scaleAdd(-distance, this.normal, p.getPosition());
         }
     }
 }

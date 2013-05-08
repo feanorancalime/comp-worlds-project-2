@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -29,14 +28,15 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
+import forcefield.VectorField;
 import particles.ParticleSystem;
 
-import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-import particles.ParticleSystem;
+import particles.behaviors.BoundingBehavior;
 import particles.behaviors.GravityBehavior;
+import particles.behaviors.ParticleBehavior;
 
 public class Application {
 
@@ -53,7 +53,7 @@ public class Application {
 	private int forceMagnitude;
 	
 	// Coefficient of restitution.
-	private int coefficientOfRestitution;
+	private float coefficientOfRestitution = 0.99f;
 	
 	// Simple universe reference.
 	private SimpleUniverse simpleU;
@@ -141,15 +141,16 @@ public class Application {
 		scene.addChild(extent);
         particleSystem = new ParticleSystem(10,EXTENT_WIDTH/2);
         scene.addChild(particleSystem);
+        scene.addChild(new VectorField(EXTENT_WIDTH/2f, 10));
 		
 		simpleU.addBranchGraph(trueScene);
 
 		// Swing-related code
 		JFrame appFrame = new JFrame("Physics Engine - Project 2");
 		appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        canvas.setPreferredSize(new Dimension(800,600));
+        canvas.setPreferredSize(new Dimension(400,300));
 		appFrame.add(canvas, BorderLayout.CENTER);
-		appFrame.add(buildControlPanel(), BorderLayout.SOUTH);
+		//appFrame.add(buildControlPanel(), BorderLayout.SOUTH);
 		appFrame.pack();
         appFrame.setLocationRelativeTo(null); //center the window
         //disabled because it's super annoying for testing --david
@@ -172,7 +173,7 @@ public class Application {
 	}
 
     private void addBehaviors(ParticleSystem particleSystem) {
-        particleSystem.addParticleForceBehavior(new GravityBehavior(0.00001));
+        particleSystem.addParticleForceBehavior(new GravityBehavior(.000001));
         particleSystem.addParticleCollisionBehavior(new BoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
     }
 
