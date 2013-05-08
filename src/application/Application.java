@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
-import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -29,6 +28,7 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
+import forcefield.VectorField;
 import particles.ParticleSystem;
 
 import com.sun.j3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
@@ -60,6 +60,7 @@ public class Application {
 	
 	// Particle system
     private ParticleSystem particleSystem;
+    private VectorField vectorField;
 
     /**
      * Main method.
@@ -68,11 +69,11 @@ public class Application {
      */
     public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				new Application().createAndShowGUI();
-			}
-		});
+            @Override
+            public void run() {
+                new Application().createAndShowGUI();
+            }
+        });
 	}
 
 	/**
@@ -141,6 +142,8 @@ public class Application {
 		scene.addChild(extent);
         particleSystem = new ParticleSystem(10,EXTENT_WIDTH/2);
         scene.addChild(particleSystem);
+        vectorField = new VectorField(EXTENT_WIDTH/2f,10);
+        scene.addChild(vectorField);
 		
 		simpleU.addBranchGraph(trueScene);
 
