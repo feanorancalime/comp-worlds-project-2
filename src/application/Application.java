@@ -268,6 +268,9 @@ public class Application {
 				JSlider source = (JSlider) e.getSource();
 				coefficientOfRestitution = source.getValue()/100f;
 				coefficientLabel.setText("" + source.getValue() + "%");
+                //update the coefficients
+                for(CollisionBehavior cb : collisionBehaviors)
+                    cb.setCoefficientOfRestitution(coefficientOfRestitution);
 			}
 		};
 		coefficientOfRestitutionSlider.addChangeListener(coefficientListener);
