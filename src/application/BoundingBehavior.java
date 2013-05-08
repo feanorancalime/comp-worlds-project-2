@@ -14,7 +14,7 @@ import particles.behaviors.ParticleBehavior;
  */
 public class BoundingBehavior implements ParticleBehavior {
     private HalfSpace[] boundaries;
-    private final float COEFFICIENT_OF_RESTITUTION;
+    private float coefficientOfRestitution;
 
     public BoundingBehavior(final float half_width, final float COEFFICIENT_OF_RESTITUTION) {
         boundaries = new HalfSpace[]{
@@ -28,13 +28,18 @@ public class BoundingBehavior implements ParticleBehavior {
                 new HalfSpace(0,0,-half_width   ,0,0,1),
                 new HalfSpace(0,0,half_width   ,0,0,-1),
         };
-        this.COEFFICIENT_OF_RESTITUTION = COEFFICIENT_OF_RESTITUTION;
+        this.coefficientOfRestitution = COEFFICIENT_OF_RESTITUTION;
     }
 
     @Override
     public void behave(ParticleSystem particleSystem, Particle particle) {
         for(int i = 0; i < boundaries.length; i++) {
-            boundaries[i].checkAndResolveCollision(particle,COEFFICIENT_OF_RESTITUTION);
+            boundaries[i].checkAndResolveCollision(particle, coefficientOfRestitution);
         }
     }
+
+	@Override
+	public void updateBehaviorValue(float percentageChange) {
+		coefficientOfRestitution = coefficientOfRestitution * percentageChange;
+	}
 }

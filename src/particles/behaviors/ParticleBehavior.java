@@ -8,4 +8,6 @@ import particles.ParticleSystem;
  */
 public interface ParticleBehavior {
     void behave(ParticleSystem particleSystem, Particle particle);
+    
+    void updateBehaviorValue(float percentage);
 }
