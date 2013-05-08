@@ -37,6 +37,7 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 
 import particles.ParticleSystem;
 import particles.behaviors.GravityBehavior;
+import particles.behaviors.ParticleBehavior;
 
 public class Application {
 
@@ -46,14 +47,17 @@ public class Application {
 	// Width of the extent in meters.
 	private static final float EXTENT_WIDTH = 20;
 	
+	// Starting percentage value for sliders
+	private static final int PERCENTAGE = 100;
+	
 	// Current particle behavior.
 	private ParticleBehavior currentBehavior;
 	
-	// Magnitude of the force being applied.
-	private int forceMagnitude;
+	// Magnitude of the force being applied, as a percentage.
+	private float forceMagnitude = 1f;
 	
-	// Coefficient of restitution.
-	private int coefficientOfRestitution;
+	// Coefficient of restitution. 
+	private float coefficientOfRestitution = 1f;
 	
 	// Simple universe reference.
 	private SimpleUniverse simpleU;
@@ -173,7 +177,8 @@ public class Application {
 
     private void addBehaviors(ParticleSystem particleSystem) {
         particleSystem.addParticleForceBehavior(new GravityBehavior(0.00001));
-        particleSystem.addParticleCollisionBehavior(new BoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
+        particleSystem.addParticleCollisionBehavior(new BoundingBehavior(EXTENT_WIDTH/2, 
+        											coefficientOfRestitution));
     }
 
     private void tick() {
@@ -199,7 +204,7 @@ public class Application {
 		JSlider coefficientOfRestitutionSlider = buildSlider(0, 100, 100);
 		
 		// TODO Use the buildRadioButton() method to create these
-		JRadioButton enableFirstForce = new JRadioButton();
+		JRadioButton enableFirstForce = buildRadioButton(new GravityBehavior(0.00001));
 		JRadioButton enableSecondForce = new JRadioButton();
 		JRadioButton enableThirdForce = new JRadioButton();
 
@@ -231,8 +236,8 @@ public class Application {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider) e.getSource();
-				forceMagnitude = source.getValue();
-				forceMagLabel.setText("" + forceMagnitude);
+				forceMagnitude = source.getValue() / PERCENTAGE;
+				forceMagLabel.setText(source.getValue() + "%");
 			}
 		};
 		forceMagnitudeSlider.addChangeListener(forceMagnitudeListener);
@@ -241,8 +246,8 @@ public class Application {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider) e.getSource();
-				coefficientOfRestitution = source.getValue();
-				coefficientLabel.setText("" + coefficientOfRestitution);
+				coefficientOfRestitution = source.getValue() / PERCENTAGE;
+				coefficientLabel.setText(source.getValue() + "%");
 			}
 		};
 		coefficientOfRestitutionSlider.addChangeListener(coefficientListener);
@@ -256,7 +261,7 @@ public class Application {
 		return slider;
 	}
 	
-	private final JRadioButton buildRadioButton(final ParticleBehavior changeBehavior) {
+	private final JRadioButton buildRadioButton(final particles.behaviors.ParticleBehavior changeBehavior) {
 		final JRadioButton button = new JRadioButton();
 		ActionListener listener = new ActionListener() {
 			@Override
