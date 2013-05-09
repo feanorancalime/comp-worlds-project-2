@@ -44,6 +44,10 @@ public class ParticleSystem extends BranchGroup implements ParticleSystemInterfa
         particleSet = new HashSet<Particle>(numPoints);
         this.range = range;
         this.radius = radius;
+        this.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
+        this.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
+        this.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+        this.setCapability(BranchGroup.ALLOW_DETACH);
         this.setParticleCount(numPoints);
     }
 
@@ -60,7 +64,7 @@ public class ParticleSystem extends BranchGroup implements ParticleSystemInterfa
             int remove_count = getParticleCount() - particleCount;
             Iterator<Particle> it = particleSet.iterator();
             while(it.hasNext() && remove_count>0) {
-                it.next();
+                this.removeChild(it.next());
                 it.remove();
                 remove_count--;
             }
