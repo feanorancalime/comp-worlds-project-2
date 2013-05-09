@@ -96,4 +96,9 @@ public class ForceVector extends BranchGroup implements ParticleInterface {
     public void setMass(double mass) {
         this.mass = mass;
     }
+
+    @Override
+    public float getArea() {
+        return 0;
+    }
 }

@@ -184,6 +184,7 @@ public class Application {
     private void addBehaviors(ParticleSystem particleSystem) {
         forceBehaviors.add(new GravityBehavior(10));
         forceBehaviors.add(new WindBehavior(20));
+        forceBehaviors.add(new DragBehavior(0.01f));
 
         collisionBehaviors.add(new CubeBoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
 

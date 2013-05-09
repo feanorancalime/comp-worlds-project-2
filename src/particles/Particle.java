@@ -125,4 +125,9 @@ public class Particle extends BranchGroup implements ParticleInterface {
     public void setMass(double mass) {
         this.mass = mass;
     }
+
+    @Override
+    public float getArea() {
+        return (float)(radius*radius*Math.PI);
+    }
 }

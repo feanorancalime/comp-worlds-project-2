@@ -24,4 +24,6 @@ public interface ParticleInterface {
 
     double getMass();
     void setMass(double mass);
+
+    float getArea();
 }

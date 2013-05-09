@@ -31,9 +31,7 @@ public class WindBehavior implements ForceBehavior {
     private float force;
 
 
-    private float FORCE_PERIOD_BIG = 2f;
-    private float FORCE_PERIOD_MED = 1f;
-    private float FORCE_PERIOD_LOW = 0.5f;
+    private float FORCE_PERIOD_BIG = 1.2f;
 
     private float offset1;
     private float offset2;
