@@ -21,8 +21,14 @@ import javax.media.j3d.Light;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Color3f;
@@ -30,13 +36,19 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
-import forcefield.VectorField;
 import particles.ParticleSystem;
+import particles.behaviors.CollisionBehavior;
+import particles.behaviors.CubeBoundingBehavior;
+import particles.behaviors.DragBehavior;
+import particles.behaviors.ForceBehavior;
+import particles.behaviors.GravityBehavior;
+import particles.behaviors.ParticleBehavior;
+import particles.behaviors.WindBehavior;
 
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
-import particles.behaviors.*;
+import forcefield.VectorField;
 
 public class Application {
 
@@ -196,11 +208,6 @@ public class Application {
         for(CollisionBehavior cb : collisionBehaviors) {
             particleSystem.addParticleCollisionBehavior(cb);
         }
-
-
-//        WindBehavior wb = new WindBehavior(20);
-//        forceBehaviors.add(wb);
-//        forceField.addParticleForceBehavior(wb);
     }
     private void addBehavior(ParticleBehavior particleBehavior) {
         if(particleBehavior instanceof ForceBehavior)
@@ -219,7 +226,6 @@ public class Application {
         forceField.removeBehavior(particleBehavior);
 
     }
-
 
     long old_time = System.currentTimeMillis();
     long new_time;
@@ -241,15 +247,15 @@ public class Application {
 	private final JPanel buildControlPanel() {
 		// Basic panel setups
 		JPanel controlPanel = new JPanel();
-		JPanel radioButtonPanel = new JPanel();
+		JPanel checkBoxPanel = new JPanel();
 		JPanel sliderPanel = new JPanel();
 		
 		GridLayout radioButtonGrid = new GridLayout(0, 2);
 		GridLayout sliderGrid = new GridLayout(0, 3);
-		radioButtonPanel.setLayout(radioButtonGrid);
+		checkBoxPanel.setLayout(radioButtonGrid);
 		sliderPanel.setLayout(sliderGrid);
 		
-		controlPanel.add(radioButtonPanel, BorderLayout.EAST);
+		controlPanel.add(checkBoxPanel, BorderLayout.EAST);
 		controlPanel.add(sliderPanel, BorderLayout.WEST);
 
 		// Add controls for forces
@@ -258,15 +264,9 @@ public class Application {
         forceMagnitudeSlider.setMinorTickSpacing(250);
 		JSlider coefficientOfRestitutionSlider = buildSlider(0, 100, (int)(coefficientOfRestitution*100));
 		
-		// TODO Use the buildRadioButton() method to create these
-//		JRadioButton enableFirstForce = new JRadioButton();
-//		JRadioButton enableSecondForce = new JRadioButton();
-//		JRadioButton enableThirdForce = new JRadioButton();
-
-		ButtonGroup group = new ButtonGroup();
-        for(ForceBehavior fb : forceBehaviors) {
-            JRadioButton jrb = new JRadioButton();
-            jrb.addActionListener(new ActionListener() {
+        for(final ForceBehavior fb : forceBehaviors) {
+            JCheckBox behaviorEnable = new JCheckBox();
+            behaviorEnable.addActionListener(new ActionListener() {
                 public ForceBehavior associatedBehavior;
                 public JSlider slider;
 
@@ -290,27 +290,25 @@ public class Application {
                     return this;
                 }
             }.init(fb, forceMagnitudeSlider));
-
-            group.add(jrb);
-            jrb.setText(fb.getName());
-            radioButtonPanel.add(jrb);
+            
+            // Add and remove behaviors when selected
+            behaviorEnable.addChangeListener(new ChangeListener() {
+				
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					JCheckBox source = (JCheckBox) e.getSource();
+					if (source.isSelected()) {
+						addBehavior(fb);
+					} else {
+						removeBehavior(fb);
+					}
+				}
+			});
+            
+            behaviorEnable.setText(fb.getName());
+            behaviorEnable.setSelected(true);
+            checkBoxPanel.add(behaviorEnable);
         }
-        //select the first element
-        if(group.getElements().hasMoreElements())
-            group.getElements().nextElement().setSelected(true);
-//		group.add(enableFirstForce);
-//        enableFirstForce.setSelected(true);
-//		group.add(enableSecondForce);
-//		group.add(enableThirdForce);
-//
-//		radioButtonPanel.add(enableFirstForce);
-//		radioButtonPanel.add(new JLabel("Gravity"));
-//
-//		radioButtonPanel.add(enableSecondForce);
-//		radioButtonPanel.add(new JLabel("Force2"));
-//
-//		radioButtonPanel.add(enableThirdForce);
-//		radioButtonPanel.add(new JLabel("Force3"));
 		
 		sliderPanel.add(new JLabel("Magnitude"));
 		sliderPanel.add(forceMagnitudeSlider);
@@ -354,17 +352,5 @@ public class Application {
 		slider.setMinorTickSpacing(1);
 		slider.setPaintTicks(true);
 		return slider;
-	}
-	
-	private final JRadioButton buildRadioButton(final ParticleBehavior changeBehavior) {
-		final JRadioButton button = new JRadioButton();
-		ActionListener listener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				currentBehavior = changeBehavior;
-			}
-		};
-		button.addActionListener(listener);
-		return button;
 	}
 }

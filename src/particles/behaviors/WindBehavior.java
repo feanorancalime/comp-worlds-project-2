@@ -1,11 +1,12 @@
 package particles.behaviors;
 
-import particles.ParticleInterface;
-import particles.ParticleSystemInterface;
+import java.util.Random;
 
 import javax.media.j3d.Transform3D;
 import javax.vecmath.Vector3f;
-import java.util.Random;
+
+import particles.ParticleInterface;
+import particles.ParticleSystemInterface;
 
 /**
  * Created with IntelliJ IDEA.
