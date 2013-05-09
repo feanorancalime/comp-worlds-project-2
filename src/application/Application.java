@@ -158,9 +158,10 @@ public class Application {
         scene.addChild(particleSystem);
         forceField = new VectorField(EXTENT_WIDTH/2f, FIELD_DIVISIONS);
         forceFieldBranchGroup = new BranchGroup();
-        forceFieldBranchGroup.setCapability(BranchGroup.ALLOW_DETACH);
+        forceFieldBranchGroup.setCapability(BranchGroup.ALLOW_DETACH | BranchGroup.ALLOW_CHILDREN_EXTEND);
         forceFieldBranchGroup.addChild(forceField);
         scene.addChild(forceFieldBranchGroup);
+        scene.setCapability(BranchGroup.ALLOW_DETACH | BranchGroup.ALLOW_CHILDREN_EXTEND);
 		
 		simpleU.addBranchGraph(trueScene);
         addBehaviors();
@@ -239,7 +240,6 @@ public class Application {
         collisionBehaviors.remove(particleBehavior);
         particleSystem.removeBehavior(particleBehavior);
         forceField.removeBehavior(particleBehavior);
-
     }
 
     long old_time = System.currentTimeMillis();
@@ -277,7 +277,24 @@ public class Application {
 		controlPanel.add(sliderPanel, BorderLayout.WEST);
 
 		// Add controls for forces
-		JSlider coefficientOfRestitutionSlider = buildSlider(0, 100, (int)(coefficientOfRestitution*100));
+		
+		// Add control for force field
+        JCheckBox forceFieldEnable = new JCheckBox();
+        forceFieldEnable.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				JCheckBox source = (JCheckBox) e.getSource();
+				if (source.isSelected()) {
+					setForceFieldEnabled(true);
+				} else {
+					setForceFieldEnabled(false);
+				}
+			}
+		});
+     
+        forceFieldEnable.setText("Force Field");
+        forceFieldEnable.setSelected(true);
+        checkBoxPanel.add(forceFieldEnable);
 		
         for(final ForceBehavior fb : forceBehaviors) {
         	// Checkboxes for behaviors
@@ -331,6 +348,7 @@ public class Application {
             
         }
 		
+    	JSlider coefficientOfRestitutionSlider = buildSlider(0, 100, (int)(coefficientOfRestitution*100));
 		sliderPanel.add(new JLabel("Coefficient of restitution"));
 		sliderPanel.add(coefficientOfRestitutionSlider);
 		final JLabel coefficientLabel = new JLabel("" + coefficientOfRestitutionSlider.getValue());
