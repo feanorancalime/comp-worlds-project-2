@@ -9,11 +9,7 @@ import particles.ParticleInterface;
 import particles.ParticleSystemInterface;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Lemtzas
- * Date: 5/8/13
- * Time: 7:11 PM
- * To change this template use File | Settings | File Templates.
+ * This behavior blows the particles in a single varying direction with varying force amounts.
  */
 public class WindBehavior implements ForceBehavior {
     private static final float FORCE_MAXIMUM = 100;
@@ -35,8 +31,14 @@ public class WindBehavior implements ForceBehavior {
     private float offset1;
     private float offset2;
     private float offset3;
+    private String name;
 
     public WindBehavior(float newtons) {
+        this(newtons,"Wind");
+    }
+
+    public WindBehavior(float newtons, String name) {
+        this.name = name;
         force = newtons;
         direction = new Vector3f(RAND.nextFloat(),RAND.nextFloat(),RAND.nextFloat());
         direction.normalize();
@@ -99,6 +101,6 @@ public class WindBehavior implements ForceBehavior {
 
     @Override
     public String getName() {
-        return "Wind";
+        return name;
     }
 }
