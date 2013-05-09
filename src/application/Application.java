@@ -24,14 +24,7 @@ import javax.media.j3d.Light;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
-import javax.swing.Timer;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.vecmath.Color3f;
@@ -180,6 +173,10 @@ public class Application {
         canvas.setPreferredSize(new Dimension(800,600));
 		appFrame.add(canvas, BorderLayout.CENTER);
 		appFrame.add(buildControlPanel(), BorderLayout.SOUTH);
+
+
+
+
 		appFrame.pack();
         appFrame.setLocationRelativeTo(null); //center the window
         //disabled because it's super annoying for testing --david
@@ -311,7 +308,24 @@ public class Application {
 		sliderPanel.setLayout(sliderGrid);
 		
 		controlPanel.add(checkBoxPanel, BorderLayout.EAST);
-		controlPanel.add(sliderPanel, BorderLayout.WEST);
+		controlPanel.add(sliderPanel, BorderLayout.CENTER);
+
+
+        JTextArea explanation = new JTextArea();
+        explanation.setEditable(false);
+        explanation.setWrapStyleWord(true);
+        explanation.setLineWrap(true);
+        explanation.append("WASD for planar movement (XZ)\n");
+        explanation.append("QE for up-down movement (Y)\n");
+        explanation.append("Right click and drag to look\n");
+        explanation.append("\n");
+        explanation.append("Use the sliders to alter the forces\n");
+        explanation.append("Use the check boxes to enable/disable forces\n");
+        explanation.append("There is a slider for adding/removing balls (randomly)\n");
+        explanation.append("\n");
+        explanation.append("Use the \"Wrap\" check box to allow x/z plane wrapping.\n");
+        explanation.setPreferredSize(new Dimension(300,200));
+        controlPanel.add(explanation,BorderLayout.EAST);
 
 		// Add controls for forces
 		
@@ -335,23 +349,24 @@ public class Application {
         checkBoxPanel.add(forceFieldEnable);
 
 
-//        JCheckBox worldWrapEnable = new JCheckBox();
-//        forceFieldEnable.addItemListener(new ItemListener() {
-//
-//            @Override
-//            public void itemStateChanged(ItemEvent e) {
-//                JCheckBox source = (JCheckBox) e.getSource();
-//                if (source.isSelected()) {
-//                    setForceFieldEnabled(true);
-//                } else {
-//                    setForceFieldEnabled(false);
-//                }
-//            }
-//        });
-//        forceFieldEnable.setText("Force Field");
-//        forceFieldEnable.setSelected(true);
-//        checkBoxPanel.add(forceFieldEnable);
+        JCheckBox worldWrapEnable = new JCheckBox();
+        worldWrapEnable.addItemListener(new ItemListener() {
 
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                JCheckBox source = (JCheckBox) e.getSource();
+                if (source.isSelected()) {
+                    setWorldWrapEnabled(true);
+                } else {
+                    setWorldWrapEnabled(false);
+                }
+            }
+        });
+        worldWrapEnable.setText("World Wrap");
+        worldWrapEnable.setSelected(false);
+        checkBoxPanel.add(worldWrapEnable);
+
+        checkBoxPanel.add(new JSeparator());
 
         for(final ForceBehavior fb : forceBehaviors) {
         	// Checkboxes for behaviors
