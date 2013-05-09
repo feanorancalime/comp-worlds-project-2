@@ -21,7 +21,11 @@ public class HalfSpace {
 
 
     Vector3f v3f = new Vector3f();
-
+    public boolean checkCollision(Particle p) {
+        p.position.get(v3f);
+        float distance = this.normal.dot(v3f) - this.intercept;
+        return distance < 0;
+    }
     public void checkAndResolveCollision(Particle p, float COEFFICIENT_OF_RESTITUTION) {
         p.position.get(v3f);
         float distance = this.normal.dot(v3f) - this.intercept;
