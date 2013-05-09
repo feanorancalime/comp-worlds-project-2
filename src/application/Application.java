@@ -10,6 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
@@ -78,6 +79,8 @@ public class Application {
     BranchGroup trueScene;
     BranchGroup scene;
     BranchGroup forceFieldBranchGroup;
+    private CubeBoundingBehavior normalCollisionBehavior;
+    private CubeBoundingWrapBehavior wrapCollisionBehavior;
 
     /**
      * Main method.
@@ -216,6 +219,25 @@ public class Application {
         }
     }
 
+    boolean worldWrapEnabled = false;
+
+    /**
+     * Sets "world wrap"
+     */
+    private void setWorldWrapEnabled(final boolean enabled) {
+        if(enabled) {
+            if(!worldWrapEnabled) {
+                removeBehavior(normalCollisionBehavior);
+                addBehavior(wrapCollisionBehavior);
+            }
+            worldWrapEnabled = true;
+        } else {
+            removeBehavior(wrapCollisionBehavior);
+            addBehavior(normalCollisionBehavior);
+            worldWrapEnabled = false;
+        }
+    }
+
     /**Helper method to add the behaviors to the scene**/
     private void addBehaviors() {
         forceBehaviors.add(new GravityBehavior(10));
@@ -225,7 +247,9 @@ public class Application {
         forceBehaviors.add(new DragBehavior(0.01f));
 
         //collisionBehaviors.add(new CubeBoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
-        collisionBehaviors.add(new CubeBoundingWrapBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
+        normalCollisionBehavior = new CubeBoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution);
+        wrapCollisionBehavior = new CubeBoundingWrapBehavior(EXTENT_WIDTH/2, coefficientOfRestitution);
+        collisionBehaviors.add(normalCollisionBehavior);
 
         for(ForceBehavior fb : forceBehaviors) {
             particleSystem.addParticleForceBehavior(fb);
@@ -309,7 +333,26 @@ public class Application {
         forceFieldEnable.setText("Force Field");
         forceFieldEnable.setSelected(true);
         checkBoxPanel.add(forceFieldEnable);
-		
+
+
+//        JCheckBox worldWrapEnable = new JCheckBox();
+//        forceFieldEnable.addItemListener(new ItemListener() {
+//
+//            @Override
+//            public void itemStateChanged(ItemEvent e) {
+//                JCheckBox source = (JCheckBox) e.getSource();
+//                if (source.isSelected()) {
+//                    setForceFieldEnabled(true);
+//                } else {
+//                    setForceFieldEnabled(false);
+//                }
+//            }
+//        });
+//        forceFieldEnable.setText("Force Field");
+//        forceFieldEnable.setSelected(true);
+//        checkBoxPanel.add(forceFieldEnable);
+
+
         for(final ForceBehavior fb : forceBehaviors) {
         	// Checkboxes for behaviors
             JCheckBox behaviorEnable = new JCheckBox();
