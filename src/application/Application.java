@@ -265,6 +265,7 @@ public class Application {
             collisionBehaviors.add((CollisionBehavior)particleBehavior);
         particleSystem.addBehavior(particleBehavior);
         forceField.addBehavior(particleBehavior);
+        forceField.resetMaxLength();
 
     }
 
@@ -274,6 +275,7 @@ public class Application {
         collisionBehaviors.remove(particleBehavior);
         particleSystem.removeBehavior(particleBehavior);
         forceField.removeBehavior(particleBehavior);
+        forceField.resetMaxLength();
     }
 
     long old_time = System.currentTimeMillis();
