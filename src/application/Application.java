@@ -6,6 +6,8 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -118,6 +120,8 @@ public class Application {
 		worldScaleTG.setTransform(t3D);
 		trueScene.addChild(worldScaleTG);
 		scene = new BranchGroup();
+        scene.setCapability(BranchGroup.ALLOW_CHILDREN_WRITE);
+        scene.setCapability(BranchGroup.ALLOW_CHILDREN_READ);
 		worldScaleTG.addChild(scene);
 
 		Light light = new AmbientLight(new Color3f(1f, 1f, 1f));
@@ -158,10 +162,11 @@ public class Application {
         scene.addChild(particleSystem);
         forceField = new VectorField(EXTENT_WIDTH/2f, FIELD_DIVISIONS);
         forceFieldBranchGroup = new BranchGroup();
-        forceFieldBranchGroup.setCapability(BranchGroup.ALLOW_DETACH | BranchGroup.ALLOW_CHILDREN_EXTEND);
+        forceFieldBranchGroup.setCapability(BranchGroup.ALLOW_DETACH);
         forceFieldBranchGroup.addChild(forceField);
         scene.addChild(forceFieldBranchGroup);
-        scene.setCapability(BranchGroup.ALLOW_DETACH | BranchGroup.ALLOW_CHILDREN_EXTEND);
+        scene.setCapability(BranchGroup.ALLOW_DETACH);
+        scene.setCapability(BranchGroup.ALLOW_CHILDREN_EXTEND);
 		
 		simpleU.addBranchGraph(trueScene);
         addBehaviors();
@@ -192,15 +197,23 @@ public class Application {
 		appFrame.setVisible(true);
 	}
 
+    boolean forceFieldEnabled = true;
+
     /**
      * Hides or displays the Force Field. Enabled by default.
      * @param enabled On or off?
      */
-    private void setForceFieldEnabled(boolean enabled) {
-        if(enabled)
-            scene.addChild(forceFieldBranchGroup);
-        else
+    private void setForceFieldEnabled(final boolean enabled) {
+        if(enabled) {
+            if(!forceFieldEnabled) {
+                scene.addChild(forceFieldBranchGroup);
+            }
+            forceFieldEnabled = true;
+        } else {
+//            scene.removeChild(forceFieldBranchGroup);
             forceFieldBranchGroup.detach();
+            forceFieldEnabled = false;
+        }
     }
 
     /**Helper method to add the behaviors to the scene**/
@@ -280,17 +293,18 @@ public class Application {
 		
 		// Add control for force field
         JCheckBox forceFieldEnable = new JCheckBox();
-        forceFieldEnable.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				JCheckBox source = (JCheckBox) e.getSource();
-				if (source.isSelected()) {
-					setForceFieldEnabled(true);
-				} else {
-					setForceFieldEnabled(false);
-				}
-			}
-		});
+        forceFieldEnable.addItemListener(new ItemListener() {
+
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                JCheckBox source = (JCheckBox) e.getSource();
+                if (source.isSelected()) {
+                    setForceFieldEnabled(true);
+                } else {
+                    setForceFieldEnabled(false);
+                }
+            }
+        });
      
         forceFieldEnable.setText("Force Field");
         forceFieldEnable.setSelected(true);
