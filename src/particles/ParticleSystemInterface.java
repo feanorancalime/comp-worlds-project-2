@@ -1,5 +1,7 @@
 package particles;
 
+import particles.behaviors.ParticleBehavior;
+
 /**
  * Created with IntelliJ IDEA.
  * User: mojito
@@ -8,4 +10,7 @@ package particles;
  * To change this template use File | Settings | File Templates.
  */
 public interface ParticleSystemInterface {
+    void addBehavior(ParticleBehavior particleBehavior);
+
+    void removeBehavior(ParticleBehavior particleBehavior);
 }

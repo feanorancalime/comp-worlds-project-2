@@ -1,11 +1,9 @@
 package particles.behaviors;
 
-import forcefield.ParticleInterface;
-import org.omg.CORBA.PRIVATE_MEMBER;
+import particles.ParticleInterface;
 import particles.ParticleSystemInterface;
 
 import javax.media.j3d.Transform3D;
-import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import java.util.Random;
 

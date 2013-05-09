@@ -1,11 +1,10 @@
 package particles.behaviors;
 
-import forcefield.ParticleInterface;
+import particles.ParticleInterface;
 import particles.ParticleSystemInterface;
 
 import javax.media.j3d.Transform3D;
 import javax.vecmath.Vector3f;
-import java.util.Random;
 
 /**
  * Created with IntelliJ IDEA.

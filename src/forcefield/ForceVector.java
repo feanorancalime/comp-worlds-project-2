@@ -1,13 +1,10 @@
 package forcefield;
 
-import com.sun.j3d.utils.geometry.Sphere;
-import particles.ParticleSystem;
+import particles.ParticleInterface;
 
 import javax.media.j3d.*;
-import javax.vecmath.Color4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
-import java.awt.*;
 
 /**
  * A particle. Meant to live within the ParticleSystem class.

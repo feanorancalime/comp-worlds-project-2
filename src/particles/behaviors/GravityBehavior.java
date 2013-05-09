@@ -1,8 +1,6 @@
 package particles.behaviors;
 
-import forcefield.ParticleInterface;
-import particles.Particle;
-import particles.ParticleSystem;
+import particles.ParticleInterface;
 import particles.ParticleSystemInterface;
 
 /**

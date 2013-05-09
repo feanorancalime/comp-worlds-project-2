@@ -62,7 +62,7 @@ public class Application {
     private ParticleSystem particleSystem;
     private VectorField forceField;
     private static final int PARTICLE_COUNT = 50;
-    private static final int FIELD_DIVISIONS = 20;
+    private static final int FIELD_DIVISIONS = 10;
     double DISTANCE = 15d;
 
     private Set<ForceBehavior> forceBehaviors = new HashSet<ForceBehavior>();
@@ -153,7 +153,7 @@ public class Application {
         scene.addChild(forceField);
 		
 		simpleU.addBranchGraph(trueScene);
-        addBehaviors(particleSystem);
+        addBehaviors();
 
 		// Swing-related code
 		JFrame appFrame = new JFrame("Physics Engine - Project 2");
@@ -181,7 +181,7 @@ public class Application {
 		appFrame.setVisible(true);
 	}
 
-    private void addBehaviors(ParticleSystem particleSystem) {
+    private void addBehaviors() {
         forceBehaviors.add(new GravityBehavior(10));
         forceBehaviors.add(new WindBehavior(20));
         forceBehaviors.add(new DragBehavior(0.01f));
@@ -201,6 +201,23 @@ public class Application {
 //        WindBehavior wb = new WindBehavior(20);
 //        forceBehaviors.add(wb);
 //        forceField.addParticleForceBehavior(wb);
+    }
+    private void addBehavior(ParticleBehavior particleBehavior) {
+        if(particleBehavior instanceof ForceBehavior)
+            forceBehaviors.add((ForceBehavior)particleBehavior);
+        if(particleBehavior instanceof CollisionBehavior)
+            collisionBehaviors.add((CollisionBehavior)particleBehavior);
+        particleSystem.addBehavior(particleBehavior);
+        forceField.addBehavior(particleBehavior);
+
+    }
+
+    private void removeBehavior(ParticleBehavior particleBehavior) {
+        forceBehaviors.remove(particleBehavior);
+        collisionBehaviors.remove(particleBehavior);
+        particleSystem.removeBehavior(particleBehavior);
+        forceField.removeBehavior(particleBehavior);
+
     }
 
 

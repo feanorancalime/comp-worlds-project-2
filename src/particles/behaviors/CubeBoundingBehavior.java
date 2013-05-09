@@ -1,11 +1,9 @@
 package particles.behaviors;
 
-import forcefield.ParticleInterface;
+import particles.ParticleInterface;
 import particles.HalfSpace;
 import particles.Particle;
-import particles.ParticleSystem;
 import particles.ParticleSystemInterface;
-import particles.behaviors.ParticleBehavior;
 
 /**
  * Created with IntelliJ IDEA.

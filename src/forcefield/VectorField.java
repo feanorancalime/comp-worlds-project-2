@@ -2,6 +2,8 @@ package forcefield;
 
 import particles.Particle;
 import particles.ParticleSystemInterface;
+import particles.behaviors.CollisionBehavior;
+import particles.behaviors.ForceBehavior;
 import particles.behaviors.ParticleBehavior;
 
 import javax.media.j3d.*;
@@ -160,5 +162,19 @@ public class VectorField extends Shape3D implements ParticleSystemInterface {
 
     public void resetMaxLength() {
         maxLengthSquared = 0;
+    }
+
+    @Override
+    public void addBehavior(ParticleBehavior particleBehavior) {
+        if(particleBehavior instanceof ForceBehavior)
+            particleForces.add(particleBehavior);
+        if(particleBehavior instanceof CollisionBehavior)
+            particleCollisions.add(particleBehavior);
+    }
+
+    @Override
+    public void removeBehavior(ParticleBehavior particleBehavior) {
+        particleForces.remove(particleBehavior);
+        particleCollisions.remove(particleBehavior);
     }
 }
