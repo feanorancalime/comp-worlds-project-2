@@ -326,6 +326,8 @@ public class Application {
         explanation.append("There is a slider for adding/removing balls (randomly)\n");
         explanation.append("\n");
         explanation.append("Use the \"Wrap\" check box to allow x/z plane wrapping.\n");
+        explanation.append("\n");
+        explanation.append("Max Line length represent the highest current force. All others are scaled accordingly.\n");
         explanation.setPreferredSize(new Dimension(300,200));
         controlPanel.add(explanation,BorderLayout.EAST);
 
