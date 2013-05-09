@@ -161,7 +161,7 @@ public class Application {
         extent = new Box(dim, dim, dim, app);
 		extent.setPickable(false);
 		scene.addChild(extent);
-        particleSystem = new ParticleSystem(PARTICLE_COUNT,EXTENT_WIDTH/2);
+        particleSystem = new ParticleSystem(PARTICLE_COUNT,EXTENT_WIDTH / 2);
         scene.addChild(particleSystem);
         forceField = new VectorField(EXTENT_WIDTH/2f, FIELD_DIVISIONS);
         forceFieldBranchGroup = new BranchGroup();
@@ -423,6 +423,22 @@ public class Application {
 			}
 		};
 		coefficientOfRestitutionSlider.addChangeListener(coefficientListener);
+		
+		JSlider particleSlider = buildSlider(0, 100, PARTICLE_COUNT);
+		sliderPanel.add(new JLabel("Particles"));
+		sliderPanel.add(particleSlider);
+		final JLabel particleCountLabel = new JLabel("" + particleSlider.getValue());
+		sliderPanel.add(particleCountLabel);
+		
+		ChangeListener particleListener = new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				JSlider source = (JSlider) e.getSource();
+				coefficientOfRestitution = source.getValue();
+				particleSystem.setParticleCount(source.getValue());
+			}
+		};
+		particleSlider.addChangeListener(particleListener);
 		return controlPanel;
 	}
 
