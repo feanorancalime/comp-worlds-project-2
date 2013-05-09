@@ -23,9 +23,9 @@ public class GravityBehavior implements ForceBehavior {
     }
 
     @Override
-	public void updateBehaviorValue(float percentageChange) {
-		G = G * percentageChange;
-	}
+    public void update(float dt) {
+        //does nothing
+    }
 
     @Override
     public String getName() {

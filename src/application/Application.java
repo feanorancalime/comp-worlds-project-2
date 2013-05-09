@@ -25,7 +25,6 @@ import javax.media.j3d.TransformGroup;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.SliderUI;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
@@ -182,19 +181,24 @@ public class Application {
 	}
 
     private void addBehaviors(ParticleSystem particleSystem) {
-        GravityBehavior gravityBehavior = new GravityBehavior(10);
-        BoundingBehavior boundingBehavior = new BoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution);
-        particleSystem.addParticleForceBehavior(gravityBehavior);
-        particleSystem.addParticleCollisionBehavior(boundingBehavior);
+        forceBehaviors.add(new GravityBehavior(10));
+        //forceBehaviors.add(new WindBehavior(20));
 
-        //forceField.addParticleCollisionBehavior(boundingBehavior);
-        forceField.addParticleForceBehavior(gravityBehavior);
+        collisionBehaviors.add(new CubeBoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
 
-        forceBehaviors.add(gravityBehavior);
+        for(ForceBehavior fb : forceBehaviors) {
+            particleSystem.addParticleForceBehavior(fb);
+            forceField.addParticleForceBehavior(fb);
+        }
 
-        collisionBehaviors.add(boundingBehavior);
+        for(CollisionBehavior cb : collisionBehaviors) {
+            particleSystem.addParticleCollisionBehavior(cb);
+        }
 
 
+        WindBehavior wb = new WindBehavior(20);
+        forceBehaviors.add(wb);
+        forceField.addParticleForceBehavior(wb);
     }
 
 
@@ -205,6 +209,13 @@ public class Application {
         float difference = (new_time - old_time)/ 1000f;
         particleSystem.update(difference);
         forceField.update(difference);
+        for(ForceBehavior fb : forceBehaviors) {
+            fb.update(difference);
+        }
+        for(CollisionBehavior cb : collisionBehaviors) {
+            cb.update(difference);
+        }
+
         old_time = new_time;
     }
 	
@@ -224,8 +235,8 @@ public class Application {
 
 		// Add controls for forces
 		JSlider forceMagnitudeSlider = buildSlider(0, 100, 100);
-        forceMagnitudeSlider.setMajorTickSpacing(100);
-        forceMagnitudeSlider.setMinorTickSpacing(100);
+        forceMagnitudeSlider.setMajorTickSpacing(1000);
+        forceMagnitudeSlider.setMinorTickSpacing(250);
 		JSlider coefficientOfRestitutionSlider = buildSlider(0, 100, (int)(coefficientOfRestitution*100));
 		
 		// TODO Use the buildRadioButton() method to create these
@@ -242,13 +253,13 @@ public class Application {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    currentForceBehavior = associatedBehavior;
                     float max = associatedBehavior.getForceMaximum();
                     float min = associatedBehavior.getForceMinimum();
                     float cur = associatedBehavior.getForceMagnitude();
-                    slider.setMaximum((int)(max*100));
+                    slider.setMaximum((int) (max * 100));
                     slider.setMinimum((int) (min * 100));
-                    slider.setValue((int)(cur*100));
-                    currentForceBehavior = associatedBehavior;
+                    slider.setValue((int) (cur * 100));
                     System.out.printf("Slider Changed: Min (%02.2f) Max (%02.2f) Cur (%02.2f)\n",min,max,cur);
                 }
 
@@ -299,6 +310,7 @@ public class Application {
 				forceMagnitude = source.getValue();
 				forceMagLabel.setText("" + Math.round(forceMagnitude)/100f);
                 currentForceBehavior.setForceMagnitude(forceMagnitude/100f);
+                forceField.resetMaxLength(); //clear the max length so it can adjust quickly
 			}
 		};
 		forceMagnitudeSlider.addChangeListener(forceMagnitudeListener);

@@ -10,8 +10,7 @@ import particles.ParticleSystemInterface;
  */
 public interface ParticleBehavior {
     void behave(ParticleSystemInterface particleSystem, ParticleInterface particle);
-    
-    void updateBehaviorValue(float percentage);
+    void update(float dt);
 
     String getName();
 }

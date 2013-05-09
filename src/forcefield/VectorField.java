@@ -157,4 +157,8 @@ public class VectorField extends Shape3D implements ParticleSystemInterface {
                 forceVectorWorkspace.y+getPosStartY(index),
                 forceVectorWorkspace.z+getPosStartZ(index));
     }
+
+    public void resetMaxLength() {
+        maxLengthSquared = 0;
+    }
 }
