@@ -150,6 +150,7 @@ public class Application {
         scene.addChild(forceField);
 		
 		simpleU.addBranchGraph(trueScene);
+        addBehaviors(particleSystem);
 
 		// Swing-related code
 		JFrame appFrame = new JFrame("Physics Engine - Project 2");
@@ -167,7 +168,6 @@ public class Application {
 //		}
 
         //simulation start
-        addBehaviors(particleSystem);
         new Timer(1000 / UPDATE_RATE, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 canvas.stopRenderer();
@@ -229,19 +229,41 @@ public class Application {
 		JRadioButton enableThirdForce = new JRadioButton();
 
 		ButtonGroup group = new ButtonGroup();
-		group.add(enableFirstForce);
-        enableFirstForce.setSelected(true);
-		group.add(enableSecondForce);
-		group.add(enableThirdForce);
-		
-		radioButtonPanel.add(enableFirstForce);
-		radioButtonPanel.add(new JLabel("Gravity"));
-		
-		radioButtonPanel.add(enableSecondForce);
-		radioButtonPanel.add(new JLabel("Force2"));
-		
-		radioButtonPanel.add(enableThirdForce);
-		radioButtonPanel.add(new JLabel("Force3"));
+        for(ForceBehavior fb : forceBehaviors) {
+            JRadioButton jrb = new JRadioButton();
+            jrb.addActionListener(new ActionListener() {
+                public ForceBehavior associatedBehavior;
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                }
+                /*Call immediately after to associate with correct ForceBehavior*/
+                public ActionListener init(ForceBehavior associatedBehavior) {
+                    this.associatedBehavior = associatedBehavior;
+                    return this;
+                }
+            }.init(fb));
+            group.add(jrb);
+            jrb.setText(fb.getName());
+            radioButtonPanel.add(jrb);
+        }
+        //select the first element
+        if(group.getElements().hasMoreElements())
+            group.getElements().nextElement().setSelected(true);
+//		group.add(enableFirstForce);
+//        enableFirstForce.setSelected(true);
+//		group.add(enableSecondForce);
+//		group.add(enableThirdForce);
+//
+//		radioButtonPanel.add(enableFirstForce);
+//		radioButtonPanel.add(new JLabel("Gravity"));
+//
+//		radioButtonPanel.add(enableSecondForce);
+//		radioButtonPanel.add(new JLabel("Force2"));
+//
+//		radioButtonPanel.add(enableThirdForce);
+//		radioButtonPanel.add(new JLabel("Force3"));
 		
 		sliderPanel.add(new JLabel("Magnitude"));
 		sliderPanel.add(forceMagnitudeSlider);
