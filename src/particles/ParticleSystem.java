@@ -8,6 +8,7 @@ import javax.media.j3d.*;
 import javax.vecmath.Color4f;
 import javax.vecmath.Point3f;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
@@ -19,6 +20,8 @@ public class ParticleSystem extends BranchGroup implements ParticleSystemInterfa
     private Set<ParticleBehavior> particleForces;
     private Set<ParticleBehavior> particleCollisions;
     private static final float DEFAULT_RADIUS = 0.2f;
+    private final float range;
+    private final float radius;
 
     public ParticleSystem() {
         this(0);
@@ -36,22 +39,47 @@ public class ParticleSystem extends BranchGroup implements ParticleSystemInterfa
     }
 
     public ParticleSystem(final int numPoints, final float radius,final float range) {
-        Random rand = new Random();
         particleForces = new HashSet<ParticleBehavior>();
         particleCollisions = new HashSet<ParticleBehavior>();
         particleSet = new HashSet<Particle>(numPoints);
-        for(int i = 0; i < numPoints; i++ ){
-            double  r = rand.nextFloat(),
-                    g = rand.nextFloat(),
-                    b = rand.nextFloat();
-            double max = Math.max(Math.max(r,g),b);
-            r /= max; g /= max; b /= max; //normalize colors for MAXIMUM POWER
+        this.range = range;
+        this.radius = radius;
+        this.setParticleCount(numPoints);
+    }
 
-            Particle p = new Particle(this,
-                    new Point3f(rand.nextFloat()*range*2-range,rand.nextFloat()*range*2-range,rand.nextFloat()*range*2-range),
-                    new Color4f((float)r,(float)g,(float)b,1f),radius);
-            particleSet.add(p);
-            this.addChild(p);
+    /**How many particles are there?**/
+    public int getParticleCount() {
+        return particleSet.size();
+    }
+
+    /**How many particles should there be?
+     * If higher than getParticleCount, adds particles; if lower, removes them.
+     **/
+    public void setParticleCount(int particleCount) {
+        if(particleCount < getParticleCount()) {
+            int remove_count = getParticleCount() - particleCount;
+            Iterator<Particle> it = particleSet.iterator();
+            while(it.hasNext() && remove_count>0) {
+                it.next();
+                it.remove();
+                remove_count--;
+            }
+        } else {
+            Random rand = new Random();
+            int insert_count = particleCount - getParticleCount();
+            for(;insert_count>0;insert_count--) {
+                double  r = rand.nextFloat(),
+                        g = rand.nextFloat(),
+                        b = rand.nextFloat();
+                double max = Math.max(Math.max(r,g),b);
+                r /= max; g /= max; b /= max; //normalize colors for MAXIMUM POWER
+
+                Particle p = new Particle(this,
+                        new Point3f(rand.nextFloat()*range*2-range,rand.nextFloat()*range*2-range,rand.nextFloat()*range*2-range),
+                        new Color4f((float)r,(float)g,(float)b,1f),radius);
+                particleSet.add(p);
+                this.addChild(p);
+            }
         }
     }
 

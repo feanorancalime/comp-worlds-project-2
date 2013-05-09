@@ -70,8 +70,8 @@ public class Application {
 	// Particle system
     private ParticleSystem particleSystem;
     private VectorField forceField;
-    private static final int PARTICLE_COUNT = 50;
-    private static final int FIELD_DIVISIONS = 10;
+    private static final int PARTICLE_COUNT = 50; //number of particles
+    private static final int FIELD_DIVISIONS = 10; //divisions in the force field
     double DISTANCE = 15d;
 
     private Set<ForceBehavior> forceBehaviors = new HashSet<ForceBehavior>();
@@ -208,6 +208,7 @@ public class Application {
             forceFieldBranchGroup.detach();
     }
 
+    /**Helper method to add the behaviors to the scene**/
     private void addBehaviors() {
         forceBehaviors.add(new GravityBehavior(10));
         forceBehaviors.add(new WindBehavior(20));
@@ -224,6 +225,7 @@ public class Application {
             particleSystem.addParticleCollisionBehavior(cb);
         }
     }
+    /**Adds a single behavior to the scene and all appropriate systems**/
     private void addBehavior(ParticleBehavior particleBehavior) {
         if(particleBehavior instanceof ForceBehavior)
             forceBehaviors.add((ForceBehavior)particleBehavior);
@@ -234,6 +236,7 @@ public class Application {
 
     }
 
+    /**Removes a single behavior from the scene and all appropriate systems**/
     private void removeBehavior(ParticleBehavior particleBehavior) {
         forceBehaviors.remove(particleBehavior);
         collisionBehaviors.remove(particleBehavior);
@@ -244,6 +247,8 @@ public class Application {
 
     long old_time = System.currentTimeMillis();
     long new_time;
+
+    /** Updates the system's simulation**/
     private void tick() {
         new_time = System.currentTimeMillis();
         float difference = (new_time - old_time)/ 1000f;
@@ -258,7 +263,8 @@ public class Application {
 
         old_time = new_time;
     }
-	
+
+    /** Builds the control panel **/
 	private final JPanel buildControlPanel() {
 		// Basic panel setups
 		JPanel controlPanel = new JPanel();
@@ -361,7 +367,8 @@ public class Application {
 		coefficientOfRestitutionSlider.addChangeListener(coefficientListener);
 		return controlPanel;
 	}
-	
+
+    /** Creates a slider **/
 	private final JSlider buildSlider(int min, int max, int value) {
 		JSlider slider = new JSlider(min, max, value);
 		slider.setMinorTickSpacing(1);
