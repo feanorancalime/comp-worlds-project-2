@@ -49,20 +49,15 @@ public class WindBehavior implements ForceBehavior {
 
     @Override
     public void behave(ParticleSystemInterface particleSystem, ParticleInterface particle) {
-        float force_base_x = (float)Math.abs(Math.sin(particle.getPosition().x/FORCE_PERIOD_BIG + offset1) +
-                Math.sin(particle.getPosition().x/FORCE_PERIOD_MED + offset2) +
-                Math.sin(particle.getPosition().x/FORCE_PERIOD_LOW + offset3) + 3);
-        float force_base_y = (float)Math.abs(Math.cos(particle.getPosition().y/FORCE_PERIOD_BIG + offset1) +
-                Math.cos(particle.getPosition().y/FORCE_PERIOD_MED + offset2) +
-                Math.cos(particle.getPosition().y/FORCE_PERIOD_LOW + offset3) + 3);
-        float force_base_z = (float)Math.abs(
-                Math.sin(particle.getPosition().z / FORCE_PERIOD_BIG + offset1) + 1 - (Math.cos(particle.getPosition().z / FORCE_PERIOD_BIG + offset1) + 1) +
-                Math.sin(particle.getPosition().z / FORCE_PERIOD_MED + offset2) + 1 - (Math.cos(particle.getPosition().z / FORCE_PERIOD_MED + offset2) + 1) +
-                Math.sin(particle.getPosition().z / FORCE_PERIOD_LOW + offset3) + 1 - (Math.cos(particle.getPosition().z / FORCE_PERIOD_LOW + offset3) + 1));
+        float force_base_x = (float)Math.sin(particle.getPosition().x/FORCE_PERIOD_BIG + offset1) + 1;
+        float force_base_y = (float)Math.sin(particle.getPosition().y/FORCE_PERIOD_BIG + offset1) + 1;
+        float force_base_z = (float)Math.sin(particle.getPosition().z/FORCE_PERIOD_BIG + offset1) + 1;
 
-        v3f.set(direction.x*force_base_x,direction.y*force_base_y,direction.z*force_base_z);
+        v3f.set(direction.x*force_base_x,
+                direction.y*force_base_y,
+                direction.z*force_base_z);
         v3f.normalize();
-        float scale = (float)(Math.sin(particle.getPosition().x/FORCE_PERIOD_MED) - (Math.cos(particle.getPosition().z/FORCE_PERIOD_MED)-Math.sin(particle.getPosition().y/FORCE_PERIOD_MED)))/3f*FORCE_VARIANCE_PERCENT;
+        float scale = (float)(force_base_x+force_base_y+force_base_z)/6*FORCE_VARIANCE_PERCENT;
         scale *= force;
 
         v3f.scale(force - scale);
