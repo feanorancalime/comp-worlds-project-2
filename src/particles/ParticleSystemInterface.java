@@ -3,14 +3,21 @@ package particles;
 import particles.behaviors.ParticleBehavior;
 
 /**
- * Created with IntelliJ IDEA.
- * User: mojito
- * Date: 5/8/13
- * Time: 2:20 PM
- * To change this template use File | Settings | File Templates.
+ * Abstracts the ParticleSystem
  */
 public interface ParticleSystemInterface {
+    /**Adds an arbitrary particle behavior**/
     void addBehavior(ParticleBehavior particleBehavior);
 
+    /**Removes an arbitrary particle behavior**/
     void removeBehavior(ParticleBehavior particleBehavior);
+
+    /**Adds a particle behavior to the force section (before update / collision)**/
+    void addParticleForceBehavior(ParticleBehavior particleBehavior);
+
+    /**Add a particle behavior to the collision section (after update / forces)**/
+    void addParticleCollisionBehavior(ParticleBehavior particleBehavior);
+
+    /**Update the system**/
+    void update(double dt);
 }

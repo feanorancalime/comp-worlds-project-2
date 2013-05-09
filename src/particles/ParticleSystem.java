@@ -83,14 +83,19 @@ public class ParticleSystem extends BranchGroup implements ParticleSystemInterfa
         }
     }
 
+    /**Add a force behavior to act on all the particles within the system.**/
+    @Override
     public void addParticleForceBehavior(final ParticleBehavior particleBehavior) {
         particleForces.add(particleBehavior);
     }
 
+    /**Add a collision behavior to act on all the particles within the system.**/
+    @Override
     public void addParticleCollisionBehavior(final ParticleBehavior particleBehavior) {
         particleCollisions.add(particleBehavior);
     }
 
+    @Override
     public void update(final double dt) {
         //create one array to avoid unnecessary iterator instantiation (avoiding a foreach loop)
         //this could be further sped up by updating an array every time a behavior is added

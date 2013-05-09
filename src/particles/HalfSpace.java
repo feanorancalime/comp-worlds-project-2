@@ -21,11 +21,13 @@ public class HalfSpace {
 
 
     Vector3f v3f = new Vector3f();
+    /**Is the particle on the wrong side of the fence?**/
     public boolean checkCollision(Particle p) {
         p.position.get(v3f);
         float distance = this.normal.dot(v3f) - this.intercept;
         return distance < 0;
     }
+    /**Check if a particle is on the wrong side...and then do something about it**/
     public void checkAndResolveCollision(Particle p, float COEFFICIENT_OF_RESTITUTION) {
         p.position.get(v3f);
         float distance = this.normal.dot(v3f) - this.intercept;

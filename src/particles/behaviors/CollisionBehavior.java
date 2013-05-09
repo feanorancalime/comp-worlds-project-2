@@ -1,13 +1,14 @@
 package particles.behaviors;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Lemtzas
- * Date: 5/8/13
- * Time: 4:29 PM
- * To change this template use File | Settings | File Templates.
+ *Represents a behavior that performs only Collision.
+ *
+ * These behaviors go after force behaviors.
  */
 public interface CollisionBehavior extends ParticleBehavior {
+    /**Set the coefficient of restitution.**/
     void setCoefficientOfRestitution(float coefficientOfRestitution);
+
+    /**Get the current coefficient of restitution.**/
     float getCoefficientOfRestitution();
 }

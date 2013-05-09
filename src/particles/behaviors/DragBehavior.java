@@ -7,11 +7,7 @@ import javax.media.j3d.Transform3D;
 import javax.vecmath.Vector3f;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Lemtzas
- * Date: 5/8/13
- * Time: 7:11 PM
- * To change this template use File | Settings | File Templates.
+ * This ForceBehavior adds a drag force in opposition to the points velocity.
  */
 public class DragBehavior implements ForceBehavior {
     private static final float FORCE_MAXIMUM = 20;

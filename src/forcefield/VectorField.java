@@ -15,7 +15,7 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * Represents a system of particleSet with a universal size and set of behaviors.
+ * This displays the forces acting on stationary parts. It is otherwise identical to the ParticleSystem class.
  */
 public class VectorField extends Shape3D implements ParticleSystemInterface {
     private Set<Particle> particleSet;
@@ -25,6 +25,10 @@ public class VectorField extends Shape3D implements ParticleSystemInterface {
     private static final Color4f START_COLOR = new Color4f(.5f,0,0,1);
     private static final Color4f END_COLOR = new Color4f(.5f,0,0,0);
 
+    /**
+     * @param halfWidth Half the width of the boundary space
+     * @param divisions How many divisions should there be to this space (for point locations)
+     */
     public VectorField(final float halfWidth, final int divisions) {
         particleForces = new HashSet<ParticleBehavior>();
         particleCollisions = new HashSet<ParticleBehavior>();
@@ -38,23 +42,29 @@ public class VectorField extends Shape3D implements ParticleSystemInterface {
         setAppearance(appearance);
     }
 
+    /**The point data, for updating the rendering.**/
     float positions[];
+    /**The points in the region acting as stationary particles to collect forces**/
     ForceVector forces[];
+    /**Helper method for accessing point data.**/
     private void setPosition(int index,float x, float y, float z) {
         positions[index*3   ] = x;
         positions[index*3 +1] = y;
         positions[index*3 +2] = z;
     }
+    /**Helper method for accessing point data.**/
     private float getPosStartX(int index) {
         return positions[index*3   ];
     }
+    /**Helper method for accessing point data.**/
     private float getPosStartY(int index) {
         return positions[index*3 +1];
     }
+    /**Helper method for accessing point data.**/
     private float getPosStartZ(int index) {
         return positions[index*3 +2];
     }
-
+    /**Creates all the geometry (lines/colors/vectors)**/
     private Geometry createGeometry(float halfWidth, int divisions) {
         LineArray geometry = new LineArray(2*divisions*divisions*divisions,LineArray.COLOR_4|LineArray.BY_REFERENCE|LineArray.COORDINATES);
 
@@ -101,14 +111,19 @@ public class VectorField extends Shape3D implements ParticleSystemInterface {
         return geometry;  //To change body of created methods use File | Settings | File Templates.
     }
 
+    /**Add a force behavior**/
     public void addParticleForceBehavior(final ParticleBehavior particleBehavior) {
         particleForces.add(particleBehavior);
     }
 
+    /**Add a collision behavior (not used here)**/
     public void addParticleCollisionBehavior(final ParticleBehavior particleBehavior) {
         particleCollisions.add(particleBehavior);
     }
 
+    /**Update the particles(force vectors)
+     * @param dt Time difference (seconds)
+     **/
     public void update(final double dt) {
         //create one array to avoid unnecessary iterator instantiation (avoiding a foreach loop)
         //this could be further sped up by updating an array every time a behavior is added
@@ -137,11 +152,17 @@ public class VectorField extends Shape3D implements ParticleSystemInterface {
         }
     }
 
+    //workspace fields for setForce
     Vector3f forceVectorWorkspace = new Vector3f();
     double maxLength = 0;
     double scale = 1;
     double maxLengthSquared = 0;
 
+    /**
+     * Sets a force to be displayed and scales it accordingly.
+     * @param index The index of the particle(force vector)
+     * @param forceVector The force (in newtons)
+     */
     public void setForce(int index, Vector3f forceVector) {
 
         double len2 = forceVector.lengthSquared();
@@ -160,6 +181,9 @@ public class VectorField extends Shape3D implements ParticleSystemInterface {
                 forceVectorWorkspace.z+getPosStartZ(index));
     }
 
+    /**
+     * Resets the maximum force, which is used for force scaling. Use this after the magnitudes of the forces have been changed.
+     */
     public void resetMaxLength() {
         maxLengthSquared = 0;
     }

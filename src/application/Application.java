@@ -206,6 +206,8 @@ public class Application {
     private void addBehaviors() {
         forceBehaviors.add(new GravityBehavior(10));
         forceBehaviors.add(new WindBehavior(20));
+        forceBehaviors.add(new WindBehavior(0,"Wind 2"));
+        forceBehaviors.add(new WindBehavior(0,"Wind 3: Revelations"));
         forceBehaviors.add(new DragBehavior(0.01f));
 
         //collisionBehaviors.add(new CubeBoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
