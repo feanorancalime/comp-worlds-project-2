@@ -37,13 +37,7 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
 import particles.ParticleSystem;
-import particles.behaviors.CollisionBehavior;
-import particles.behaviors.CubeBoundingBehavior;
-import particles.behaviors.DragBehavior;
-import particles.behaviors.ForceBehavior;
-import particles.behaviors.GravityBehavior;
-import particles.behaviors.ParticleBehavior;
-import particles.behaviors.WindBehavior;
+import particles.behaviors.*;
 
 import com.sun.j3d.utils.geometry.Box;
 import com.sun.j3d.utils.universe.SimpleUniverse;
@@ -214,7 +208,8 @@ public class Application {
         forceBehaviors.add(new WindBehavior(20));
         forceBehaviors.add(new DragBehavior(0.01f));
 
-        collisionBehaviors.add(new CubeBoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
+        //collisionBehaviors.add(new CubeBoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
+        collisionBehaviors.add(new CubeBoundingWrapBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
 
         for(ForceBehavior fb : forceBehaviors) {
             particleSystem.addParticleForceBehavior(fb);

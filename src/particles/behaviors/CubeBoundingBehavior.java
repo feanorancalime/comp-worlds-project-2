@@ -6,11 +6,7 @@ import particles.Particle;
 import particles.ParticleSystemInterface;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Lemtzas
- * Date: 5/6/13
- * Time: 12:33 PM
- * To change this template use File | Settings | File Templates.
+ * This CollisionBehavior bounds boxes to a cube shape by bouncing them off all sides.
  */
 public class CubeBoundingBehavior implements CollisionBehavior {
     private HalfSpace[] boundaries;

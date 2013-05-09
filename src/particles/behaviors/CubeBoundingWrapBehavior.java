@@ -8,11 +8,7 @@ import particles.ParticleSystemInterface;
 import javax.vecmath.Vector3f;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Lemtzas
- * Date: 5/6/13
- * Time: 12:33 PM
- * To change this template use File | Settings | File Templates.
+ * This CollisionBehavior wraps points in a cube, but instead of bouncing off the walls, they wrap around to the other side.
  */
 public class CubeBoundingWrapBehavior implements CollisionBehavior {
     private HalfSpace[] boundaries;
