@@ -230,6 +230,7 @@ public class Application {
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(enableFirstForce);
+        enableFirstForce.setSelected(true);
 		group.add(enableSecondForce);
 		group.add(enableThirdForce);
 		
