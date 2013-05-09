@@ -268,7 +268,7 @@ public class Application {
 		JPanel checkBoxPanel = new JPanel();
 		JPanel sliderPanel = new JPanel();
 		
-		GridLayout radioButtonGrid = new GridLayout(0, 2);
+		GridLayout radioButtonGrid = new GridLayout(0, 1);
 		GridLayout sliderGrid = new GridLayout(0, 3);
 		checkBoxPanel.setLayout(radioButtonGrid);
 		sliderPanel.setLayout(sliderGrid);
@@ -277,39 +277,11 @@ public class Application {
 		controlPanel.add(sliderPanel, BorderLayout.WEST);
 
 		// Add controls for forces
-		JSlider forceMagnitudeSlider = buildSlider(0, 100, 100);
-        forceMagnitudeSlider.setMajorTickSpacing(1000);
-        forceMagnitudeSlider.setMinorTickSpacing(250);
 		JSlider coefficientOfRestitutionSlider = buildSlider(0, 100, (int)(coefficientOfRestitution*100));
 		
         for(final ForceBehavior fb : forceBehaviors) {
+        	// Checkboxes for behaviors
             JCheckBox behaviorEnable = new JCheckBox();
-            behaviorEnable.addActionListener(new ActionListener() {
-                public ForceBehavior associatedBehavior;
-                public JSlider slider;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    currentForceBehavior = associatedBehavior;
-                    float max = associatedBehavior.getForceMaximum();
-                    float min = associatedBehavior.getForceMinimum();
-                    float cur = associatedBehavior.getForceMagnitude();
-                    slider.setMaximum((int) (max * 100));
-                    slider.setMinimum((int) (min * 100));
-                    slider.setValue((int) (cur * 100));
-                    System.out.printf("Slider Changed: Min (%02.2f) Max (%02.2f) Cur (%02.2f)\n",min,max,cur);
-                }
-
-                /*Call immediately after to associate with correct ForceBehavior*/
-                public ActionListener init(ForceBehavior associatedBehavior, JSlider slider) {
-                    this.associatedBehavior = associatedBehavior;
-                    this.slider = slider;
-                    this.actionPerformed(null);
-                    return this;
-                }
-            }.init(fb, forceMagnitudeSlider));
-            
-            // Add and remove behaviors when selected
             behaviorEnable.addChangeListener(new ChangeListener() {
 				
 				@Override
@@ -322,33 +294,47 @@ public class Application {
 					}
 				}
 			});
-            
+         
             behaviorEnable.setText(fb.getName());
             behaviorEnable.setSelected(true);
             checkBoxPanel.add(behaviorEnable);
+            
+            // Sliders for magnitude of forces
+            final float max = fb.getForceMaximum();
+            final float min = fb.getForceMinimum();
+            final float cur = fb.getForceMagnitude();     
+            
+    		final JSlider forceMagnitudeSlider = new JSlider();
+            
+	        sliderPanel.add(new JLabel(fb.getName()));
+			sliderPanel.add(forceMagnitudeSlider);
+			final JLabel forceMagLabel = new JLabel("" + (int) cur);
+			sliderPanel.add(forceMagLabel);
+			
+			forceMagnitudeSlider.setMinorTickSpacing(1);
+            forceMagnitudeSlider.setMaximum((int) (max * 100));
+            forceMagnitudeSlider.setMinimum((int) (min * 100));
+            forceMagnitudeSlider.setValue((int) (cur * 100));
+            forceMagnitudeSlider.addChangeListener(new ChangeListener() {
+            	
+				ForceBehavior associatedBehavior = fb;
+				
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					JSlider slider = (JSlider) e.getSource();
+    				forceMagLabel.setText("" + Math.round(slider.getValue() / 100f));
+                    associatedBehavior.setForceMagnitude(slider.getValue() / 100f);
+                    forceField.resetMaxLength(); //clear the max length so it can adjust quickly
+                    System.out.printf("Slider Changed: Min (%02.2f) Max (%02.2f) Cur (%02.2f)\n", min, max, cur);
+				}
+			});
+            
         }
-		
-		sliderPanel.add(new JLabel("Magnitude"));
-		sliderPanel.add(forceMagnitudeSlider);
-		final JLabel forceMagLabel = new JLabel("" + forceMagnitudeSlider.getValue());
-		sliderPanel.add(forceMagLabel);
 		
 		sliderPanel.add(new JLabel("Coefficient of restitution"));
 		sliderPanel.add(coefficientOfRestitutionSlider);
 		final JLabel coefficientLabel = new JLabel("" + coefficientOfRestitutionSlider.getValue());
 		sliderPanel.add(coefficientLabel);
-		
-		ChangeListener forceMagnitudeListener = new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				JSlider source = (JSlider) e.getSource();
-				forceMagnitude = source.getValue();
-				forceMagLabel.setText("" + Math.round(forceMagnitude)/100f);
-                currentForceBehavior.setForceMagnitude(forceMagnitude/100f);
-                forceField.resetMaxLength(); //clear the max length so it can adjust quickly
-			}
-		};
-		forceMagnitudeSlider.addChangeListener(forceMagnitudeListener);
 		
 		ChangeListener coefficientListener = new ChangeListener() {
 			@Override
