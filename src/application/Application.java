@@ -58,9 +58,6 @@ public class Application {
 	// Width of the extent in meters.
 	private static final float EXTENT_WIDTH = 20;
 	
-	// Current particle behavior.
-	private ParticleBehavior currentBehavior;
-	
 	// Magnitude of the force being applied.
 	private int forceMagnitude;
 	
@@ -81,6 +78,10 @@ public class Application {
     private Set<CollisionBehavior> collisionBehaviors = new HashSet<CollisionBehavior>();
 
     ForceBehavior currentForceBehavior = null;
+
+    BranchGroup trueScene;
+    BranchGroup scene;
+    BranchGroup forceFieldBranchGroup;
 
     /**
      * Main method.
@@ -116,13 +117,13 @@ public class Application {
 		
 		// Add a scaling transform that resizes the virtual world to fit
 		// within the standard view frustum.
-		BranchGroup trueScene = new BranchGroup();
+        trueScene = new BranchGroup();
 		TransformGroup worldScaleTG = new TransformGroup();
 		Transform3D t3D = new Transform3D();
 		t3D.setScale( 6 / EXTENT_WIDTH);
 		worldScaleTG.setTransform(t3D);
 		trueScene.addChild(worldScaleTG);
-		BranchGroup scene = new BranchGroup();
+		scene = new BranchGroup();
 		worldScaleTG.addChild(scene);
 
 		Light light = new AmbientLight(new Color3f(1f, 1f, 1f));
@@ -162,7 +163,10 @@ public class Application {
         particleSystem = new ParticleSystem(PARTICLE_COUNT,EXTENT_WIDTH/2);
         scene.addChild(particleSystem);
         forceField = new VectorField(EXTENT_WIDTH/2f, FIELD_DIVISIONS);
-        scene.addChild(forceField);
+        forceFieldBranchGroup = new BranchGroup();
+        forceFieldBranchGroup.setCapability(BranchGroup.ALLOW_DETACH);
+        forceFieldBranchGroup.addChild(forceField);
+        scene.addChild(forceFieldBranchGroup);
 		
 		simpleU.addBranchGraph(trueScene);
         addBehaviors();
@@ -192,6 +196,17 @@ public class Application {
         }).start();
 		appFrame.setVisible(true);
 	}
+
+    /**
+     * Hides or displays the Force Field. Enabled by default.
+     * @param enabled On or off?
+     */
+    private void setForceFieldEnabled(boolean enabled) {
+        if(enabled)
+            scene.addChild(forceFieldBranchGroup);
+        else
+            forceFieldBranchGroup.detach();
+    }
 
     private void addBehaviors() {
         forceBehaviors.add(new GravityBehavior(10));
