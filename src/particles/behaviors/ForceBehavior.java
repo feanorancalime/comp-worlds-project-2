@@ -10,4 +10,8 @@ package particles.behaviors;
 public interface ForceBehavior extends ParticleBehavior {
     void setForceMagnitude(float newtons);
     float getForceMagnitude();
+
+    float getForceMaximum();
+
+    float getForceMinimum();
 }

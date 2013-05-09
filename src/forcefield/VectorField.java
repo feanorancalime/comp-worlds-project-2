@@ -115,7 +115,6 @@ public class VectorField extends Shape3D implements ParticleSystemInterface {
         ParticleBehavior[] collisions = particleCollisions.toArray(new ParticleBehavior[particleCollisions.size()]);
 
 
-
         for(int i = 0; i < this.forces.length; i++) {
             //accumulate forces
             for(int j = 0; j < forces.length; j++) {

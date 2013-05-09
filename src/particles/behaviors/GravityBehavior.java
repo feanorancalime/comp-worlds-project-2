@@ -9,7 +9,8 @@ import particles.ParticleSystemInterface;
  * Gravity behavior for a particle system.
  */
 public class GravityBehavior implements ForceBehavior {
-	
+	private static final float MIN_VALUE = 0;
+    private static final float MAX_VALUE = 100;
     private float G;
     
     public GravityBehavior(final float gravitationalConstant) {
@@ -39,5 +40,15 @@ public class GravityBehavior implements ForceBehavior {
     @Override
     public float getForceMagnitude() {
         return G;
+    }
+
+    @Override
+    public float getForceMaximum() {
+        return MAX_VALUE;
+    }
+
+    @Override
+    public float getForceMinimum() {
+        return MIN_VALUE;
     }
 }

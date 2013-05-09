@@ -25,6 +25,7 @@ import javax.media.j3d.TransformGroup;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.SliderUI;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
@@ -66,6 +67,8 @@ public class Application {
 
     private Set<ForceBehavior> forceBehaviors = new HashSet<ForceBehavior>();
     private Set<CollisionBehavior> collisionBehaviors = new HashSet<CollisionBehavior>();
+
+    ForceBehavior currentForceBehavior = null;
 
     /**
      * Main method.
@@ -221,29 +224,43 @@ public class Application {
 
 		// Add controls for forces
 		JSlider forceMagnitudeSlider = buildSlider(0, 100, 100);
+        forceMagnitudeSlider.setMajorTickSpacing(100);
+        forceMagnitudeSlider.setMinorTickSpacing(100);
 		JSlider coefficientOfRestitutionSlider = buildSlider(0, 100, (int)(coefficientOfRestitution*100));
 		
 		// TODO Use the buildRadioButton() method to create these
-		JRadioButton enableFirstForce = new JRadioButton();
-		JRadioButton enableSecondForce = new JRadioButton();
-		JRadioButton enableThirdForce = new JRadioButton();
+//		JRadioButton enableFirstForce = new JRadioButton();
+//		JRadioButton enableSecondForce = new JRadioButton();
+//		JRadioButton enableThirdForce = new JRadioButton();
 
 		ButtonGroup group = new ButtonGroup();
         for(ForceBehavior fb : forceBehaviors) {
             JRadioButton jrb = new JRadioButton();
             jrb.addActionListener(new ActionListener() {
                 public ForceBehavior associatedBehavior;
+                public JSlider slider;
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-
+                    float max = associatedBehavior.getForceMaximum();
+                    float min = associatedBehavior.getForceMinimum();
+                    float cur = associatedBehavior.getForceMagnitude();
+                    slider.setMaximum((int)(max*100));
+                    slider.setMinimum((int) (min * 100));
+                    slider.setValue((int)(cur*100));
+                    currentForceBehavior = associatedBehavior;
+                    System.out.printf("Slider Changed: Min (%02.2f) Max (%02.2f) Cur (%02.2f)\n",min,max,cur);
                 }
+
                 /*Call immediately after to associate with correct ForceBehavior*/
-                public ActionListener init(ForceBehavior associatedBehavior) {
+                public ActionListener init(ForceBehavior associatedBehavior, JSlider slider) {
                     this.associatedBehavior = associatedBehavior;
+                    this.slider = slider;
+                    this.actionPerformed(null);
                     return this;
                 }
-            }.init(fb));
+            }.init(fb, forceMagnitudeSlider));
+
             group.add(jrb);
             jrb.setText(fb.getName());
             radioButtonPanel.add(jrb);
@@ -280,7 +297,8 @@ public class Application {
 			public void stateChanged(ChangeEvent e) {
 				JSlider source = (JSlider) e.getSource();
 				forceMagnitude = source.getValue();
-				forceMagLabel.setText("" + forceMagnitude);
+				forceMagLabel.setText("" + Math.round(forceMagnitude)/100f);
+                currentForceBehavior.setForceMagnitude(forceMagnitude/100f);
 			}
 		};
 		forceMagnitudeSlider.addChangeListener(forceMagnitudeListener);
