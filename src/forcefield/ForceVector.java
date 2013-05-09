@@ -66,10 +66,10 @@ public class ForceVector extends BranchGroup implements ParticleInterface {
     public void update(float dt) {
         // The force accumulator vector (net force) now becomes
         // the acceleration vector.
-        forceAccumulator.scale(1 / (float)mass);
-        position.scaleAdd(dt, velocity, position);
-        position.scaleAdd(dt*dt / 2, forceAccumulator, position);
-        velocity.scaleAdd(dt, forceAccumulator, velocity);
+//        forceAccumulator.scale(1 / (float)mass);
+//        position.scaleAdd(dt, velocity, position);
+//        position.scaleAdd(dt*dt / 2, forceAccumulator, position);
+//        velocity.scaleAdd(dt, forceAccumulator, velocity);
     }
 
     private final float[] points = new float[2*3];

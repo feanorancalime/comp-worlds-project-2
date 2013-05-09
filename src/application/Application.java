@@ -62,6 +62,7 @@ public class Application {
     private ParticleSystem particleSystem;
     private VectorField forceField;
     private static final int PARTICLE_COUNT = 50;
+    private static final int FIELD_DIVISIONS = 20;
     double DISTANCE = 15d;
 
     private Set<ForceBehavior> forceBehaviors = new HashSet<ForceBehavior>();
@@ -148,7 +149,7 @@ public class Application {
 		scene.addChild(extent);
         particleSystem = new ParticleSystem(PARTICLE_COUNT,EXTENT_WIDTH/2);
         scene.addChild(particleSystem);
-        forceField = new VectorField(EXTENT_WIDTH/2f, 10);
+        forceField = new VectorField(EXTENT_WIDTH/2f, FIELD_DIVISIONS);
         scene.addChild(forceField);
 		
 		simpleU.addBranchGraph(trueScene);
@@ -182,7 +183,7 @@ public class Application {
 
     private void addBehaviors(ParticleSystem particleSystem) {
         forceBehaviors.add(new GravityBehavior(10));
-        //forceBehaviors.add(new WindBehavior(20));
+        forceBehaviors.add(new WindBehavior(20));
 
         collisionBehaviors.add(new CubeBoundingBehavior(EXTENT_WIDTH/2, coefficientOfRestitution));
 
@@ -196,9 +197,9 @@ public class Application {
         }
 
 
-        WindBehavior wb = new WindBehavior(20);
-        forceBehaviors.add(wb);
-        forceField.addParticleForceBehavior(wb);
+//        WindBehavior wb = new WindBehavior(20);
+//        forceBehaviors.add(wb);
+//        forceField.addParticleForceBehavior(wb);
     }
 
 

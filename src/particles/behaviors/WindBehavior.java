@@ -4,6 +4,7 @@ import forcefield.ParticleInterface;
 import org.omg.CORBA.PRIVATE_MEMBER;
 import particles.ParticleSystemInterface;
 
+import javax.media.j3d.Transform3D;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import java.util.Random;
@@ -20,15 +21,23 @@ public class WindBehavior implements ForceBehavior {
     private static final float FORCE_MINIMUM = 0;
 
     private static final float FORCE_VARIANCE_PERCENT = 0.2f;
+    private static final float OFFSET_MAXIMUM = 10f;
+    private static final float ROT_MAXIMUM = 3f;
 
-    private static final float FORCE_PERIOD_BIG = 3f;
-    private static final float FORCE_PERIOD_MED = 1f;
-    private static final float FORCE_PERIOD_LOW = 0.5f;
     private static final Random RAND = new Random();
 
     private Vector3f direction;
 
     private float force;
+
+
+    private float FORCE_PERIOD_BIG = 2f;
+    private float FORCE_PERIOD_MED = 1f;
+    private float FORCE_PERIOD_LOW = 0.5f;
+
+    private float offset1;
+    private float offset2;
+    private float offset3;
 
     public WindBehavior(float newtons) {
         force = newtons;
@@ -40,14 +49,40 @@ public class WindBehavior implements ForceBehavior {
 
     @Override
     public void behave(ParticleSystemInterface particleSystem, ParticleInterface particle) {
-        float force_base = force * (float)Math.sin(particle.getPosition().x/2);
-        v3f.scale(force_base,direction);
+        float force_base_x = (float)Math.abs(Math.sin(particle.getPosition().x/FORCE_PERIOD_BIG + offset1) +
+                Math.sin(particle.getPosition().x/FORCE_PERIOD_MED + offset2) +
+                Math.sin(particle.getPosition().x/FORCE_PERIOD_LOW + offset3) + 3);
+        float force_base_y = (float)Math.abs(Math.cos(particle.getPosition().y/FORCE_PERIOD_BIG + offset1) +
+                Math.cos(particle.getPosition().y/FORCE_PERIOD_MED + offset2) +
+                Math.cos(particle.getPosition().y/FORCE_PERIOD_LOW + offset3) + 3);
+        float force_base_z = (float)Math.abs(
+                Math.sin(particle.getPosition().z / FORCE_PERIOD_BIG + offset1) + 1 - (Math.cos(particle.getPosition().z / FORCE_PERIOD_BIG + offset1) + 1) +
+                Math.sin(particle.getPosition().z / FORCE_PERIOD_MED + offset2) + 1 - (Math.cos(particle.getPosition().z / FORCE_PERIOD_MED + offset2) + 1) +
+                Math.sin(particle.getPosition().z / FORCE_PERIOD_LOW + offset3) + 1 - (Math.cos(particle.getPosition().z / FORCE_PERIOD_LOW + offset3) + 1));
+
+        v3f.set(direction.x*force_base_x,direction.y*force_base_y,direction.z*force_base_z);
+        v3f.normalize();
+        float scale = (float)(Math.sin(particle.getPosition().x/FORCE_PERIOD_MED) - (Math.cos(particle.getPosition().z/FORCE_PERIOD_MED)-Math.sin(particle.getPosition().y/FORCE_PERIOD_MED)))/3f*FORCE_VARIANCE_PERCENT;
+        scale *= force;
+
+        v3f.scale(force - scale);
+
+        //v3f.scale(force_base,direction);
         particle.getForceAccumulator().add(v3f);
     }
 
+    Transform3D t3d = new Transform3D();
+
     @Override
     public void update(float dt) {
-        //soon
+        offset1 += (RAND.nextFloat()*OFFSET_MAXIMUM*2-OFFSET_MAXIMUM)*dt;
+        offset2 += (RAND.nextFloat()*OFFSET_MAXIMUM*2-OFFSET_MAXIMUM)*dt;
+        offset2 += (RAND.nextFloat()*OFFSET_MAXIMUM*2-OFFSET_MAXIMUM)*dt;
+        t3d.rotX((RAND.nextFloat()*ROT_MAXIMUM*2-ROT_MAXIMUM)*dt);
+        t3d.rotY((RAND.nextFloat()*ROT_MAXIMUM*2-ROT_MAXIMUM)*dt);
+        t3d.rotZ((RAND.nextFloat()*ROT_MAXIMUM*2-ROT_MAXIMUM)*dt);
+        t3d.transform(direction);
+        direction.normalize();
     }
 
     @Override
